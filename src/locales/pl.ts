@@ -1,5 +1,5 @@
-import type { Translations } from '../i18n/resources';
-import type { PartialTranslations } from '../i18n/types';
+import type { Translations } from '@i18n/resources';
+import type { PartialTranslations } from '@i18n/types';
 
 /** Polish translations. Partial is allowed — missing keys fall back to English. */
 export const pl = {

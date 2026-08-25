@@ -1,5 +1,5 @@
-import type { Translations } from '../i18n/resources';
-import type { PartialTranslations } from '../i18n/types';
+import type { Translations } from '@i18n/resources';
+import type { PartialTranslations } from '@i18n/types';
 
 /** Simplified Chinese translations (partial — the rest falls back to English). */
 export const zhCN = {

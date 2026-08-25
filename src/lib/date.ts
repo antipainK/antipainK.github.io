@@ -1,4 +1,4 @@
-import type { Period } from '../data/portfolio';
+import type { Period } from '@data/portfolio';
 
 /** Formats a period as e.g. "Jul 2021 – Sep 2021", localized to `locale`. */
 export function formatPeriod(period: Period, locale: string, presentLabel: string): string {

@@ -1,4 +1,4 @@
-import { en } from '../locales/en';
+import { en } from '@locales/en';
 import type { LeafValues, TranslationKeysTree } from './types';
 
 /** Walks the translation object, replacing each leaf string with its dotted path. */
