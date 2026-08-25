@@ -1,0 +1,24 @@
+.hero {
+  padding: var(--space-6) 0;
+}
+
+.greeting {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-2);
+}
+
+.name {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  margin: 0 0 var(--space-2);
+}
+
+.role {
+  font-size: 1.25rem;
+  color: var(--color-accent);
+  margin: 0 0 var(--space-3);
+}
+
+.tagline {
+  color: var(--color-text-muted);
+  max-width: 40ch;
+}
