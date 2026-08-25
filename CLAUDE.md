@@ -19,7 +19,7 @@ Personal portfolio SPA. Public GitHub user-site: `https://antipaink.github.io/`.
 - **Don't rubber-stamp** a suggestion (mine or a reviewer's) — check it against the actual code first.
 
 ## Stack (current baseline — update freely when warranted)
-Vite + React + TypeScript (strict) · CSS Modules · react-i18next (4 locales) · Vitest + RTL ·
+Vite + React + TypeScript (strict) · CSS Modules · react-i18next (3 locales) · Vitest + RTL ·
 ESLint flat config (`@stylistic` formatting, **no Prettier**) · pnpm (Corepack) · Node 24 LTS ·
 GitHub Actions → Pages.
 
@@ -46,12 +46,15 @@ GitHub Actions → Pages.
   properties, light/dark via `prefers-color-scheme`).
 - **i18n — facts vs copy:**
   - Language-invariant facts (dates, company names, tech tags, links, ids) → `src/data/portfolio.ts`.
-  - Translatable prose → `src/locales/<lng>/*.json`, keyed by entry id; components read facts from
+  - Translatable prose → `src/locales/<lng>.ts`, keyed by entry id; components read facts from
     data and copy via `t()`.
-  - Namespaces: `common`, `home`, `experience`, `education`. Type-safe keys via `src/i18next.d.ts`.
-  - **New/changed user-facing text:** fill **`en` + `pl`** now; leave `zh-CN` + `pt` keys empty
-    (they fall back to `en`) and flag them as TODO. Register any new locale in `src/i18n/config.ts`
-    and `src/i18n/index.ts`.
+  - Single i18next namespace (`translation`); `common`/`home`/`experience`/`education` are just
+    nested key groups within it, not separate i18next namespaces — namespaces are overkill at this
+    project's size. Type-safe keys are derived from `en`'s shape via `src/i18n/keys.ts` +
+    `src/i18n/types.ts` (no `src/i18next.d.ts`).
+  - **New/changed user-facing text:** fill **`en` + `pl`** now; leave `zh-CN` keys empty (they fall
+    back to `en`) and flag them as TODO. Register any new locale in `src/i18n/config.ts` and
+    `src/i18n/resources.ts`.
 
 ## Version policy
 Keep dependencies and tooling reasonably current — **you may bump Node, deps, and tooling to newer

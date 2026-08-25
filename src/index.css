@@ -10,6 +10,8 @@
 
   /* Typography */
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-lg: 1.25rem;
 
   /* Spacing scale */
   --space-1: 0.25rem;

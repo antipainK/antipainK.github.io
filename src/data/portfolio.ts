@@ -1,7 +1,11 @@
 /**
  * Language-invariant portfolio facts. Translatable copy (titles, descriptions)
- * lives in `src/locales/<lng>/{experience,education}.json`, keyed by `id`.
+ * lives in `src/locales/<lng>.ts`, keyed by `id`.
  */
+
+export const profile = {
+  name: 'Wojciech Kosztyła',
+} as const;
 
 export interface Company {
   name: string;

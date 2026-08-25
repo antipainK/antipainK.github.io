@@ -11,7 +11,6 @@ export function LanguageSwitcher() {
     <label className={styles.switcher}>
       <span className={styles.label}>{t(TRANSLATION_KEYS.common.language.label)}</span>
       <select
-        aria-label={t(TRANSLATION_KEYS.common.language.select)}
         value={current}
         onChange={(event) => {
           void i18n.changeLanguage(event.target.value);

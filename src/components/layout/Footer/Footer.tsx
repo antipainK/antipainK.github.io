@@ -1,3 +1,4 @@
+import { profile } from '@data/portfolio';
 import { TRANSLATION_KEYS } from '@i18n/keys';
 import { useTranslation } from '@i18n/useTranslation';
 import styles from './Footer.module.css';
@@ -8,7 +9,7 @@ export function Footer() {
 
   return (
     <footer className={styles.footer}>
-      <p>{t(TRANSLATION_KEYS.common.footer.rights, { year })}</p>
+      <p>{t(TRANSLATION_KEYS.common.footer.rights, { year, name: profile.name })}</p>
       <p>{t(TRANSLATION_KEYS.common.footer.builtWith)}</p>
     </footer>
   );

@@ -1,3 +1,4 @@
+import { profile } from '@data/portfolio';
 import { TRANSLATION_KEYS } from '@i18n/keys';
 import { useTranslation } from '@i18n/useTranslation';
 import { LanguageSwitcher } from '../LanguageSwitcher/LanguageSwitcher';
@@ -9,8 +10,8 @@ export function Navbar() {
   return (
     <header className={styles.navbar}>
       <div className={styles.inner}>
-        <a className={styles.brand} href="#hero">Wojciech Kosztyła</a>
-        <nav aria-label="Primary" className={styles.nav}>
+        <a className={styles.brand} href="#hero">{profile.name}</a>
+        <nav aria-label={t(TRANSLATION_KEYS.common.nav.primary)} className={styles.nav}>
           <a href="#experience">{t(TRANSLATION_KEYS.common.nav.experience)}</a>
           <a href="#education">{t(TRANSLATION_KEYS.common.nav.education)}</a>
         </nav>

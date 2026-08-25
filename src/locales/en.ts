@@ -1,21 +1,21 @@
 /** English translations — the canonical shape. All keys must exist here. */
 export const en = {
   common: {
-    nav: { experience: 'Experience', education: 'Education' },
+    nav: { experience: 'Experience', education: 'Education', primary: 'Primary' },
     sections: { experience: 'Experience', education: 'Education' },
     skipToContent: 'Skip to content',
-    language: { label: 'Language', select: 'Select language' },
+    language: { label: 'Language' },
     time: { present: 'Present' },
     footer: {
       builtWith: 'Built with React, TypeScript & Vite.',
-      rights: '© {{year}} Wojciech Kosztyła',
+      rights: '© {{year}} {{name}}',
     },
     actions: { viewWebsite: 'Visit website', viewSource: 'View source' },
   },
   home: {
     hero: {
       greeting: 'Hello there,',
-      name: 'I\'m Wojciech Kosztyła',
+      name: 'I\'m {{name}}',
       role: 'Software Engineer',
       tagline: 'I build reliable, accessible web applications.',
     },
@@ -25,14 +25,12 @@ export const en = {
       jobTitle: 'Software Engineering Intern',
       title: 'Openlab Summer Student',
       shortDescription: 'Summer internship at CERN working on physics data-analysis tooling.',
-      description: 'Contributed to research software during the CERN Openlab summer programme, developing Python tooling for physics data analysis and visualization.',
     },
   },
   education: {
     agh: {
       title: 'MSc & BSc, Computer Science',
       shortDescription: 'AGH University of Science and Technology, Kraków.',
-      description: '',
     },
   },
 } as const;
