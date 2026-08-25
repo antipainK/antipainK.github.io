@@ -15,7 +15,9 @@ describe('LanguageSwitcher', () => {
 
     await user.selectOptions(select, 'pl');
     expect(i18n.resolvedLanguage).toBe('pl');
+    expect(await screen.findByText('Język')).toBeInTheDocument();
 
     await user.selectOptions(select, 'en');
+    expect(await screen.findByText('Language')).toBeInTheDocument();
   });
 });

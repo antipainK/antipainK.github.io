@@ -6,6 +6,7 @@ export const zhCN = {
   common: {
     nav: { experience: '经历', education: '教育' },
     sections: { experience: '工作经历', education: '教育背景' },
+    skipToContent: '跳到主要内容',
     language: { label: '语言', select: '选择语言' },
     time: { present: '至今' },
     footer: {

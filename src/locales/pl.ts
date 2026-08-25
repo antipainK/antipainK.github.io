@@ -6,6 +6,7 @@ export const pl = {
   common: {
     nav: { experience: 'Doświadczenie', education: 'Edukacja' },
     sections: { experience: 'Doświadczenie', education: 'Edukacja' },
+    skipToContent: 'Przejdź do treści',
     language: { label: 'Język', select: 'Wybierz język' },
     time: { present: 'Obecnie' },
     footer: {

@@ -3,6 +3,7 @@ export const en = {
   common: {
     nav: { experience: 'Experience', education: 'Education' },
     sections: { experience: 'Experience', education: 'Education' },
+    skipToContent: 'Skip to content',
     language: { label: 'Language', select: 'Select language' },
     time: { present: 'Present' },
     footer: {

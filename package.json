@@ -2,6 +2,9 @@
   "name": "antipaink.github.io",
   "private": true,
   "version": "0.0.0",
+  "description": "Personal portfolio of Wojciech Kosztyła — Software Engineer.",
+  "author": "Wojciech Kosztyła",
+  "homepage": "https://antipaink.github.io/",
   "type": "module",
   "packageManager": "pnpm@10.0.0",
   "engines": {
