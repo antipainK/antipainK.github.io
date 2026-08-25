@@ -19,3 +19,7 @@ coverage
 .idea
 .DS_Store
 *.sw?
+
+# Claude Code local artifacts (settings.json IS committed)
+.claude/.cc-writes/
+.claude/settings.local.json
