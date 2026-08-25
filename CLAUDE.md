@@ -75,6 +75,3 @@ this file to match, and re-run the gates.
 - **`src/vite-env.d.ts`** is load-bearing (CSS Module + `import.meta.env` types); don't delete.
 - **`base: '/'`** because it's the user-site repo; deploy is on push to `master`.
 
-## Content status
-The CERN/AGH entries in `src/data/portfolio.ts` and their `en`/`pl` copy are **seed placeholders** —
-real values are the owner's to fill; don't invent specifics.

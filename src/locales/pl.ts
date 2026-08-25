@@ -24,16 +24,30 @@ export const pl = {
     },
   },
   experience: {
+    qualtrics: {
+      jobTitle: 'Software Engineer I',
+      title: 'Software Engineer I',
+      shortDescription: 'Software Engineer I w zespole inżynieryjnym Qualtrics.',
+    },
+    genie: {
+      jobTitle: 'Back End Developer',
+      title: 'Back End Developer',
+      shortDescription: 'Odpowiadałem za istotną część systemu do zarządzania portfelem i ryzykiem dla portfeli krypto, zbudowanego z użyciem FastAPI, GraphQL i PostgreSQL na AWS/Kubernetes.',
+    },
     cern: {
-      jobTitle: 'Stażysta – inżynieria oprogramowania',
+      jobTitle: 'Stażysta – inżynier oprogramowania',
       title: 'Openlab Summer Student',
-      shortDescription: 'Letni staż w CERN przy narzędziach do analizy danych fizycznych.',
+      shortDescription: 'Letni staż w CERN – rozwój narzędzi do kontroli i monitorowania systemu zegarowego PPS wykorzystywanego w detektorach diamentowych LHC.',
     },
   },
   education: {
-    agh: {
-      title: 'Studia magisterskie i inżynierskie, Informatyka',
-      shortDescription: 'Akademia Górniczo-Hutnicza w Krakowie.',
+    aghMsc: {
+      title: 'Studia magisterskie, Informatyka',
+      shortDescription: 'Praca magisterska: „Processing of images from event camera”.',
+    },
+    aghBsc: {
+      title: 'Studia inżynierskie, Informatyka',
+      shortDescription: 'Praca inżynierska: „Monitoring software for time distribution in the CMS-PPS detector at CERN laboratory”.',
     },
   },
 } as const satisfies PartialTranslations<Translations>;

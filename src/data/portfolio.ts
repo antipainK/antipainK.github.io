@@ -42,8 +42,30 @@ export interface Education extends TimelineEntryBase {
   kind: 'degree' | 'course' | 'highSchool';
 }
 
-// NOTE: seed values — replace the facts below with your real details.
 export const experience = [
+  {
+    id: 'qualtrics',
+    company: {
+      name: 'Qualtrics',
+      website: 'https://www.qualtrics.com',
+    },
+    location: { country: 'Poland', city: 'Kraków' },
+    period: { start: '2024-04-01', end: null },
+    programmingLanguages: [],
+    technologies: [],
+    skills: [],
+  },
+  {
+    id: 'genie',
+    company: {
+      name: 'Genie AI',
+      website: undefined,
+    },
+    period: { start: '2023-05-01', end: '2024-03-31' },
+    programmingLanguages: ['Python'],
+    technologies: ['FastAPI', 'GraphQL', 'PostgreSQL', 'AWS', 'Kubernetes'],
+    skills: ['APIs'],
+  },
   {
     id: 'cern',
     company: {
@@ -52,24 +74,37 @@ export const experience = [
       website: 'https://home.cern',
     },
     location: { country: 'Switzerland', city: 'Geneva' },
-    period: { start: '2021-07-01', end: '2021-09-30' },
-    programmingLanguages: ['Python'],
-    technologies: ['NumPy', 'ROOT', 'Git'],
-    skills: ['Data analysis', 'Scientific computing'],
+    period: { start: '2021-07-01', end: '2021-10-31' },
+    programmingLanguages: ['Python', 'JavaScript', 'C++'],
+    technologies: ['VXI-11', 'XML'],
+    skills: ['Databases'],
   },
 ] as const satisfies readonly Experience[];
 
 export const education = [
   {
-    id: 'agh',
+    id: 'aghMsc',
     kind: 'degree',
     company: {
-      name: 'AGH UST',
-      fullName: 'AGH University of Science and Technology',
+      name: 'AGH',
+      fullName: 'AGH University of Krakow',
     },
     location: { country: 'Poland', city: 'Kraków' },
-    period: { start: '2018-10-01', end: '2023-09-30' },
-    programmingLanguages: ['C++', 'Python', 'JavaScript'],
+    period: { start: '2022-03-01', end: '2023-09-30' },
+    programmingLanguages: [],
+    technologies: [],
+    skills: [],
+  },
+  {
+    id: 'aghBsc',
+    kind: 'degree',
+    company: {
+      name: 'AGH',
+      fullName: 'AGH University of Krakow',
+    },
+    location: { country: 'Poland', city: 'Kraków' },
+    period: { start: '2018-10-01', end: '2022-02-28' },
+    programmingLanguages: [],
     technologies: [],
     skills: [],
   },
