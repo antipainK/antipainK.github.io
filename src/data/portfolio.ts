@@ -24,14 +24,86 @@ export interface Period {
   end: string | null;
 }
 
+/** Auto-computed "years of experience" duration (see `@lib/skills`) applies only to this category. */
+export type SkillCategory = 'language' | 'webDevelopment' | 'database' | 'cloudDevops' | 'aiAssisted';
+
+export interface Skill {
+  /** Exact display name. For `category: 'language'`, must match the names used in `languagePeriods`. */
+  name: string;
+  category: SkillCategory;
+  /**
+   * Entirely untracked usage windows with no matching `experience`/`education`
+   * entry at all (e.g. personal projects predating any tracked role). Only
+   * meaningful for `category: 'language'`; intentionally empty for every entry
+   * right now — no dates are invented here, see project notes before filling in.
+   */
+  additionalPeriods?: readonly Period[];
+}
+
+export const skillsCatalog = [
+  { name: 'Java', category: 'language' },
+  { name: 'Python', category: 'language' },
+  { name: 'TypeScript', category: 'language' },
+  { name: 'JavaScript', category: 'language' },
+  { name: 'C++', category: 'language' },
+  { name: 'C', category: 'language' },
+  { name: 'Lua', category: 'language' },
+  { name: 'Dart', category: 'language' },
+  { name: 'HTML + CSS', category: 'webDevelopment' },
+  { name: 'React', category: 'webDevelopment' },
+  { name: 'Vite', category: 'webDevelopment' },
+  { name: 'Node.js', category: 'webDevelopment' },
+  { name: 'Flask', category: 'webDevelopment' },
+  { name: 'PostgreSQL', category: 'database' },
+  { name: 'MySQL', category: 'database' },
+  { name: 'NoSQL', category: 'database' },
+  { name: 'MongoDB', category: 'database' },
+  { name: 'AWS', category: 'cloudDevops' },
+  { name: 'GitLab CI', category: 'cloudDevops' },
+  { name: 'RenovateBot', category: 'cloudDevops' },
+  { name: 'Splunk', category: 'cloudDevops' },
+  { name: 'Grafana', category: 'cloudDevops' },
+  { name: 'Google Cloud Platform', category: 'cloudDevops' },
+  { name: 'Claude Code', category: 'aiAssisted' },
+  { name: 'Cursor', category: 'aiAssisted' },
+  { name: 'Windsurf', category: 'aiAssisted' },
+  { name: 'Gemini', category: 'aiAssisted' },
+] as const satisfies readonly Skill[];
+
+/** Language names known to the catalog — keeps `languagePeriods` honest at compile time. */
+type LanguageSkill = Extract<(typeof skillsCatalog)[number], { category: 'language' }>;
+export type KnownProgrammingLanguage = LanguageSkill['name'];
+
+/** A date range during which a specific set of languages was in use within one entry. */
+export interface LanguagePeriod {
+  /** Defaults to the parent entry's own `period` when omitted (i.e. used for the whole entry). */
+  period?: Period;
+  languages: readonly KnownProgrammingLanguage[];
+}
+
+/** A date range during which a specific set of technologies/frameworks was in use within one entry. */
+export interface TechnologyPeriod {
+  /** Defaults to the parent entry's own `period` when omitted (i.e. used for the whole entry). */
+  period?: Period;
+  technologies: readonly string[];
+}
+
 interface TimelineEntryBase {
   /** Stable id, also the i18n key for this entry's translatable copy. */
   id: string;
   company: Company;
   location?: Location;
   period: Period;
-  programmingLanguages: readonly string[];
-  technologies: readonly string[];
+  /**
+   * Sub-ranges of `period` with the language(s) used during each — omitting
+   * `period` on an entry covers the common "one consistent stack throughout"
+   * case; multiple entries express a stack change partway through (e.g. a
+   * tech migration) or a language used only for part of a multi-year degree.
+   */
+  languagePeriods: readonly LanguagePeriod[];
+  /** Same sub-range model as `languagePeriods`, for frameworks/tools/platforms instead of languages. */
+  technologyPeriods: readonly TechnologyPeriod[];
+  /** Broad categorical tags (e.g. 'DevOps', 'APIs') — distinct from the `Skill` catalog above; not name-matched against it. */
   skills: readonly string[];
   githubLink?: string;
 }
@@ -51,9 +123,14 @@ export const experience = [
     },
     location: { country: 'Poland', city: 'Kraków' },
     period: { start: '2024-04-01', end: null },
-    programmingLanguages: [],
-    technologies: [],
-    skills: [],
+    languagePeriods: [
+      { languages: ['Java', 'TypeScript'] },
+      { period: { start: '2025-10-01', end: null }, languages: ['Python'] },
+    ],
+    technologyPeriods: [
+      { technologies: ['Spring', 'React', 'Vite', 'AWS', 'GitLab CI', 'RenovateBot', 'Splunk', 'Grafana'] },
+    ],
+    skills: ['DevOps', 'AI-assisted development'],
   },
   {
     id: 'genie',
@@ -62,9 +139,13 @@ export const experience = [
       website: undefined,
     },
     period: { start: '2023-05-01', end: '2024-03-31' },
-    programmingLanguages: ['Python'],
-    technologies: ['FastAPI', 'GraphQL', 'PostgreSQL', 'AWS', 'Kubernetes'],
-    skills: ['APIs'],
+    languagePeriods: [
+      { languages: ['Python'] },
+    ],
+    technologyPeriods: [
+      { technologies: ['FastAPI', 'GraphQL', 'PostgreSQL', 'AWS', 'Kubernetes'] },
+    ],
+    skills: ['APIs', 'Databases'],
   },
   {
     id: 'cern',
@@ -75,8 +156,12 @@ export const experience = [
     },
     location: { country: 'Switzerland', city: 'Geneva' },
     period: { start: '2021-07-01', end: '2021-10-31' },
-    programmingLanguages: ['Python', 'JavaScript', 'C++'],
-    technologies: ['VXI-11', 'XML'],
+    languagePeriods: [
+      { languages: ['Python', 'JavaScript', 'C++'] },
+    ],
+    technologyPeriods: [
+      { technologies: ['VXI-11', 'XML', 'MySQL', 'Flask'] },
+    ],
     skills: ['Databases'],
   },
 ] as const satisfies readonly Experience[];
@@ -91,8 +176,13 @@ export const education = [
     },
     location: { country: 'Poland', city: 'Kraków' },
     period: { start: '2022-03-01', end: '2023-09-30' },
-    programmingLanguages: [],
-    technologies: [],
+    // Semester placeholders (summer 21/22, winter 22/23, summer 22/23) -- fill in languages as remembered.
+    languagePeriods: [
+      { period: { start: '2022-03-01', end: '2022-09-30' }, languages: [] },
+      { period: { start: '2022-10-01', end: '2023-02-28' }, languages: [] },
+      { period: { start: '2023-03-01', end: '2023-09-30' }, languages: [] },
+    ],
+    technologyPeriods: [],
     skills: [],
   },
   {
@@ -104,8 +194,16 @@ export const education = [
     },
     location: { country: 'Poland', city: 'Kraków' },
     period: { start: '2018-10-01', end: '2022-02-28' },
-    programmingLanguages: [],
-    technologies: [],
+    // Remaining semester placeholders (winter 19/20 through winter 21/22) -- fill in languages as remembered.
+    languagePeriods: [
+      { period: { start: '2018-10-01', end: '2019-07-30' }, languages: ['C', 'C++'] },
+      { period: { start: '2019-10-01', end: '2020-02-29' }, languages: [] },
+      { period: { start: '2020-03-01', end: '2020-09-30' }, languages: [] },
+      { period: { start: '2020-10-01', end: '2021-02-28' }, languages: [] },
+      { period: { start: '2021-03-01', end: '2021-09-30' }, languages: [] },
+      { period: { start: '2021-10-01', end: '2022-02-28' }, languages: [] },
+    ],
+    technologyPeriods: [],
     skills: [],
   },
 ] as const satisfies readonly Education[];

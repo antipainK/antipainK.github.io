@@ -9,4 +9,16 @@ describe('EducationList', () => {
     expect(screen.getByRole('heading', { level: 3, name: /MSc, Computer Science/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 3, name: /BSc, Computer Science/i })).toBeInTheDocument();
   });
+
+  it('applies the highlighted class to an entry whose id is in highlightedEntryIds', () => {
+    render(<EducationList highlightedEntryIds={new Set(['aghMsc'])} />);
+    const mscItem = screen.getByRole('heading', { level: 3, name: /MSc, Computer Science/i }).closest('li');
+    expect(mscItem?.className).toMatch(/highlighted/);
+  });
+
+  it('does not highlight anything when highlightedEntryIds is omitted', () => {
+    render(<EducationList />);
+    const mscItem = screen.getByRole('heading', { level: 3, name: /MSc, Computer Science/i }).closest('li');
+    expect(mscItem?.className).not.toMatch(/highlighted/);
+  });
 });

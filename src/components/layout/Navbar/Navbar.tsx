@@ -13,6 +13,7 @@ export function Navbar() {
         <a className={styles.brand} href="#hero">{profile.name}</a>
         <nav aria-label={t(TRANSLATION_KEYS.common.nav.primary)} className={styles.nav}>
           <a href="#experience">{t(TRANSLATION_KEYS.common.nav.experience)}</a>
+          <a href="#skills">{t(TRANSLATION_KEYS.common.nav.skills)}</a>
           <a href="#education">{t(TRANSLATION_KEYS.common.nav.education)}</a>
         </nav>
         <LanguageSwitcher />

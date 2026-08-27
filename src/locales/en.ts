@@ -1,8 +1,8 @@
 /** English translations — the canonical shape. All keys must exist here. */
 export const en = {
   common: {
-    nav: { experience: 'Experience', education: 'Education', primary: 'Primary' },
-    sections: { experience: 'Experience', education: 'Education' },
+    nav: { experience: 'Experience', education: 'Education', skills: 'Skills', primary: 'Primary' },
+    sections: { experience: 'Experience', education: 'Education', skills: 'Skills' },
     skipToContent: 'Skip to content',
     language: { label: 'Language' },
     time: { present: 'Present' },
@@ -45,6 +45,20 @@ export const en = {
     aghBsc: {
       title: 'BSc, Computer Science',
       shortDescription: 'Bachelor\'s thesis: "Monitoring software for time distribution in the CMS-PPS detector at CERN laboratory".',
+    },
+  },
+  skills: {
+    categories: {
+      language: 'Programming Languages',
+      webDevelopment: 'Web Development',
+      database: 'Databases',
+      cloudDevops: 'Cloud & DevOps',
+      aiAssisted: 'AI-Assisted Development',
+    },
+    duration: {
+      years: '{{years}} yr',
+      months: '{{months}} mo',
+      yearsAndMonths: '{{years}} yr {{months}} mo',
     },
   },
 } as const;

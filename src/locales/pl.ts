@@ -4,8 +4,8 @@ import type { PartialTranslations } from '@i18n/types';
 /** Polish translations. Partial is allowed — missing keys fall back to English. */
 export const pl = {
   common: {
-    nav: { experience: 'Doświadczenie', education: 'Edukacja', primary: 'Główna' },
-    sections: { experience: 'Doświadczenie', education: 'Edukacja' },
+    nav: { experience: 'Doświadczenie', education: 'Edukacja', skills: 'Umiejętności', primary: 'Główna' },
+    sections: { experience: 'Doświadczenie', education: 'Edukacja', skills: 'Umiejętności' },
     skipToContent: 'Przejdź do treści',
     language: { label: 'Język' },
     time: { present: 'Obecnie' },
@@ -48,6 +48,20 @@ export const pl = {
     aghBsc: {
       title: 'Studia inżynierskie, Informatyka',
       shortDescription: 'Praca inżynierska: „Monitoring software for time distribution in the CMS-PPS detector at CERN laboratory”.',
+    },
+  },
+  skills: {
+    categories: {
+      language: 'Języki programowania',
+      webDevelopment: 'Programowanie webowe',
+      database: 'Bazy danych',
+      cloudDevops: 'Cloud i DevOps',
+      aiAssisted: 'Rozwój wspomagany AI',
+    },
+    duration: {
+      years: '{{years}} lat',
+      months: '{{months}} mies.',
+      yearsAndMonths: '{{years}} lat {{months}} mies.',
     },
   },
 } as const satisfies PartialTranslations<Translations>;
