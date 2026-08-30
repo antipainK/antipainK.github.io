@@ -30,6 +30,8 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test:ci
       - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm prerender
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -31,8 +31,10 @@
       "@i18n/*": ["src/i18n/*"],
       "@components/*": ["src/components/*"],
       "@data/*": ["src/data/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@lib/*": ["src/lib/*"],
-      "@locales/*": ["src/locales/*"]
+      "@locales/*": ["src/locales/*"],
+      "@pages/*": ["src/pages/*"]
     }
   },
   "include": ["src", "vitest.setup.ts"]

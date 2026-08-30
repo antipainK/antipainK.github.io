@@ -19,13 +19,15 @@ Personal portfolio SPA. Public GitHub user-site: `https://antipaink.github.io/`.
 - **Don't rubber-stamp** a suggestion (mine or a reviewer's) — check it against the actual code first.
 
 ## Stack (current baseline — update freely when warranted)
-Vite + React + TypeScript (strict) · CSS Modules · react-i18next (3 locales) · Vitest + RTL ·
-ESLint flat config (`@stylistic` formatting, **no Prettier**) · pnpm (Corepack) · Node 24 LTS ·
-GitHub Actions → Pages.
+Vite + React + TypeScript (strict) · react-router · CSS Modules · react-i18next (3 locales) ·
+Vitest + RTL · ESLint flat config (`@stylistic` formatting, **no Prettier**) · pnpm (Corepack) ·
+Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions → Pages.
 
 ## Commands
 - `pnpm dev` — dev server
 - `pnpm build` — `tsc -b && vite build`
+- `pnpm prerender` — build-time prerender (`node scripts/prerender.mjs`); run after `pnpm build`.
+  One-time per machine: `pnpm exec playwright install chromium`.
 - `pnpm lint` / `pnpm lint:fix`
 - `pnpm typecheck` — `tsc -b`
 - `pnpm test` (watch) / `pnpm test:ci` (once)
@@ -36,7 +38,10 @@ GitHub Actions → Pages.
   `.claude/settings.json`.
 - **After code changes, run `pnpm lint && pnpm typecheck && pnpm test:ci`** before calling work
   done. Add `pnpm build` when the change touches bundling/config (`vite.config.ts`, `tsconfig*`,
-  deps, assets).
+  deps, assets). Add `pnpm build && pnpm prerender` when the change touches routing/`src/pages/`,
+  and check the output under `dist/<route>/index.html` — this can't be verified by an agent in a
+  network-restricted sandbox (needs a real browser + a bindable local port), so a human needs to
+  run it.
 - **Commit messages:** Conventional Commits (`feat:`, `fix:`, `chore:`, `test:`, `ci:`, `docs:`).
 
 ## Conventions
@@ -55,6 +60,16 @@ GitHub Actions → Pages.
   - **New/changed user-facing text:** fill **`en` + `pl`** now; leave `zh-CN` keys empty (they fall
     back to `en`) and flag them as TODO. Register any new locale in `src/i18n/config.ts` and
     `src/i18n/resources.ts`.
+- **Routing & prerendering:** `react-router` defines `/` (homepage), `/cv`, `/projects/:slug` (see
+  `AppRoutes` in `src/App.tsx`). Page components live in `src/pages/` (`@pages` alias); every routed
+  page other than the homepage should call `src/hooks/useDocumentHead.ts` (`@hooks` alias) to set a
+  real `<title>`/OG tags — `HomePage` is the one exception, since `index.html`'s static tags already
+  describe it exactly and prerendering writes its snapshot to `dist/index.html` directly. GitHub Pages has
+  no server-side rewrites, so client routing alone would 404 on a direct hit/refresh to `/cv` — the
+  fix is build-time prerendering: `scripts/prerender.mjs` (Playwright + Vite's `preview()`) visits
+  every route from `scripts/deriveRoutes.ts` (derived from `src/data/projects.ts`) and writes the
+  rendered HTML to `dist/<route>/index.html`. Full rationale/mechanics/known gaps:
+  `docs/routing-and-prerendering.md`.
 
 ## Version policy
 Keep dependencies and tooling reasonably current — **you may bump Node, deps, and tooling to newer
@@ -74,4 +89,10 @@ this file to match, and re-run the gates.
   a Vite-version type clash).
 - **`src/vite-env.d.ts`** is load-bearing (CSS Module + `import.meta.env` types); don't delete.
 - **`base: '/'`** because it's the user-site repo; deploy is on push to `master`.
+- **`scripts/*.ts` run directly under Node** (verified on Node 24 — native TypeScript execution, no
+  `tsx`/`ts-node` dependency). They must use plain relative imports only, never the `@data`/`@lib`
+  aliases — Node has no knowledge of Vite's/tsconfig's path remapping outside the Vite-driven build.
+- **`pnpm prerender` needs a real browser + a bindable local port.** It fails with
+  `EPERM: listen ...` / a Playwright launch error in network-restricted or sandboxed environments —
+  expected, not a bug. Run it somewhere unrestricted, or let CI run it (`deploy.yml` already does).
 

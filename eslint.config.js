@@ -52,6 +52,20 @@ export default defineConfig([
     braceStyle: '1tbs',
   }),
 
+  // Node-side build scripts (CLI tooling). Adds Node globals on top of the
+  // base block's browser globals (flat config merges `languageOptions.globals`
+  // across matching blocks, it doesn't replace them) -- harmless here since
+  // scripts never reference DOM globals.
+  {
+    files: ['scripts/**/*.{ts,mjs}'],
+    languageOptions: {
+      globals: { ...globals.node },
+    },
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
   // React: accessibility, hooks, and fast-refresh.
   jsxA11y.flatConfigs.recommended,
   {

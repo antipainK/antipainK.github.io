@@ -8,10 +8,12 @@ Built with React, TypeScript, and Vite, with first-class internationalization.
 ## Tech stack
 
 - **Vite** + **React** + **TypeScript** (strict)
+- **react-router** for `/`, `/cv`, `/projects/:slug`
 - **CSS Modules** for scoped, zero-runtime styling
 - **react-i18next** — three languages (English, Polski, 简体中文); typed keys derived from `en`
 - **Vitest** + **React Testing Library**
 - **ESLint** flat config (`@stylistic` for formatting — no Prettier)
+- **Playwright** (dev-only) for build-time prerendering — see [Routing & prerendering](#routing--prerendering)
 - **GitHub Actions** → **GitHub Pages**
 
 ## Prerequisites & setup
@@ -56,12 +58,20 @@ pnpm preview     # serve the production build locally
 | `pnpm test` | Run Vitest in watch mode |
 | `pnpm test:ci` | Run Vitest once (CI mode) |
 | `pnpm typecheck` | Type-check without emitting |
+| `pnpm prerender` | Build-time prerender (`dist/` must already exist — run `pnpm build` first) |
+
+One-time per machine before the first `pnpm prerender`: `pnpm exec playwright install chromium`.
 
 ## Project structure
 
 ```
 src/
-  data/portfolio.ts        # typed, language-invariant facts (experience, education)
+  App.tsx                  # AppRoutes (/, /cv, /projects/:slug) + BrowserRouter
+  pages/                   # routed page components (HomePage, CvPage, ProjectPage)
+  hooks/useDocumentHead.ts # sets per-route <title>/OG tags, captured by the prerender snapshot
+  data/
+    portfolio.ts           # typed, language-invariant facts (experience, education, skills)
+    projects.ts            # projects shown on /projects/:slug (empty for now)
   i18n/
     config.ts              # SUPPORTED_LOCALES, DEFAULT_LOCALE, LOCALE_LABELS
     resources.ts           # assembles i18next resources from the locale files
@@ -71,16 +81,31 @@ src/
     en.ts                  # canonical translations (source of truth)
     pl.ts, zh-CN.ts        # PartialTranslations — missing keys fall back to en
   components/
-    layout/                # Layout, Navbar, Footer, LanguageSwitcher
-    sections/              # Hero, ExperienceTimeline, EducationList
-  lib/                     # small utilities (date formatting)
+    layout/                # Layout (react-router Outlet), Navbar, Footer, LanguageSwitcher
+    sections/              # Hero, ExperienceTimeline, SkillsSection, EducationList
+  lib/                     # small utilities (date/duration formatting, skill lookups)
+scripts/
+  deriveRoutes.ts          # pure route-list derivation, used by prerender.mjs
+  prerender.mjs            # build-time prerender (see Routing & prerendering below)
 ```
 
-Facts (dates, company names, tech tags, links) live in `data/portfolio.ts`; the
+Facts (dates, company names, tech tags, links) live in `data/portfolio.ts`/`data/projects.ts`; the
 translatable prose lives in the typed `locales/*.ts` objects. Components reference
 keys via `TRANSLATION_KEYS.common.nav.experience` and never touch a language — the
 i18n layer resolves the current locale (falling back to `en`). Imports use path
-aliases: `@i18n`, `@components`, `@data`, `@lib`, `@locales`.
+aliases: `@i18n`, `@components`, `@data`, `@lib`, `@locales`, `@pages`.
+
+## Routing & prerendering
+
+Three routes today: `/` (homepage), `/cv` (placeholder — a real dense CV layout is future work),
+`/projects/:slug` (scaffolded — `data/projects.ts` is empty, so every slug currently renders "not
+found"). GitHub Pages is a static host with no server-side rewrites, so a client-side router alone
+would 404 on a direct hit or refresh to `/cv`. The fix: after `pnpm build`, `pnpm prerender` (uses
+Playwright + Vite's `preview()` API) visits every real route and writes the fully-rendered HTML to
+`dist/<route>/index.html`, so GitHub Pages serves genuine content per route — the shipped JS still
+renders over it client-side exactly like a normal SPA. CI runs this automatically
+(`.github/workflows/deploy.yml`). Full mechanics, gotchas, and how to add a project:
+[`docs/routing-and-prerendering.md`](docs/routing-and-prerendering.md).
 
 ## Adding a language
 
@@ -91,6 +116,6 @@ aliases: `@i18n`, `@components`, `@data`, `@lib`, `@locales`.
 
 ## Deployment
 
-Every push to `master` runs lint, type-check, tests, and build, then deploys to
-GitHub Pages via GitHub Actions (`.github/workflows/deploy.yml`). Enable it once
-under **Settings → Pages → Source: GitHub Actions**.
+Every push to `master` runs lint, type-check, tests, and build, then installs Chromium and runs the
+prerender step, then deploys to GitHub Pages via GitHub Actions (`.github/workflows/deploy.yml`).
+Enable it once under **Settings → Pages → Source: GitHub Actions**.

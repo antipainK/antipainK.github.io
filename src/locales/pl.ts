@@ -4,7 +4,7 @@ import type { PartialTranslations } from '@i18n/types';
 /** Polish translations. Partial is allowed — missing keys fall back to English. */
 export const pl = {
   common: {
-    nav: { experience: 'Doświadczenie', education: 'Edukacja', skills: 'Umiejętności', primary: 'Główna' },
+    nav: { experience: 'Doświadczenie', education: 'Edukacja', skills: 'Umiejętności', cv: 'CV', primary: 'Główna' },
     sections: { experience: 'Doświadczenie', education: 'Edukacja', skills: 'Umiejętności' },
     skipToContent: 'Przejdź do treści',
     language: { label: 'Język' },
@@ -63,5 +63,8 @@ export const pl = {
       months: '{{months}} mies.',
       yearsAndMonths: '{{years}} lat {{months}} mies.',
     },
+  },
+  projects: {
+    notFound: 'Nie znaleziono projektu.',
   },
 } as const satisfies PartialTranslations<Translations>;

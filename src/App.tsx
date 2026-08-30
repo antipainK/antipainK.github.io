@@ -1,20 +1,27 @@
-import { useState } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import { Layout } from '@components/layout/Layout/Layout';
-import { EducationList } from '@components/sections/EducationList/EducationList';
-import { ExperienceTimeline } from '@components/sections/ExperienceTimeline/ExperienceTimeline';
-import { Hero } from '@components/sections/Hero/Hero';
-import { SkillsSection } from '@components/sections/SkillsSection/SkillsSection';
+import { CvPage } from '@pages/CvPage/CvPage';
+import { HomePage } from '@pages/HomePage/HomePage';
+import { ProjectPage } from '@pages/ProjectPage/ProjectPage';
+
+/** Extracted from `App` so tests can render it inside a `MemoryRouter` instead of `BrowserRouter`. */
+export function AppRoutes() {
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route element={<HomePage />} index />
+        <Route element={<CvPage />} path="cv" />
+        <Route element={<ProjectPage />} path="projects/:slug" />
+      </Route>
+    </Routes>
+  );
+}
 
 function App() {
-  const [highlightedEntryIds, setHighlightedEntryIds] = useState<ReadonlySet<string>>(new Set());
-
   return (
-    <Layout>
-      <Hero />
-      <ExperienceTimeline highlightedEntryIds={highlightedEntryIds} />
-      <SkillsSection onHighlightChange={setHighlightedEntryIds} />
-      <EducationList highlightedEntryIds={highlightedEntryIds} />
-    </Layout>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   );
 }
 

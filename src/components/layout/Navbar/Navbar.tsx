@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { profile } from '@data/portfolio';
 import { TRANSLATION_KEYS } from '@i18n/keys';
 import { useTranslation } from '@i18n/useTranslation';
@@ -10,11 +11,12 @@ export function Navbar() {
   return (
     <header className={styles.navbar}>
       <div className={styles.inner}>
-        <a className={styles.brand} href="#hero">{profile.name}</a>
+        <a className={styles.brand} href="/#hero">{profile.name}</a>
         <nav aria-label={t(TRANSLATION_KEYS.common.nav.primary)} className={styles.nav}>
-          <a href="#experience">{t(TRANSLATION_KEYS.common.nav.experience)}</a>
-          <a href="#skills">{t(TRANSLATION_KEYS.common.nav.skills)}</a>
-          <a href="#education">{t(TRANSLATION_KEYS.common.nav.education)}</a>
+          <a href="/#experience">{t(TRANSLATION_KEYS.common.nav.experience)}</a>
+          <a href="/#skills">{t(TRANSLATION_KEYS.common.nav.skills)}</a>
+          <a href="/#education">{t(TRANSLATION_KEYS.common.nav.education)}</a>
+          <Link to="/cv">{t(TRANSLATION_KEYS.common.nav.cv)}</Link>
         </nav>
         <LanguageSwitcher />
       </div>

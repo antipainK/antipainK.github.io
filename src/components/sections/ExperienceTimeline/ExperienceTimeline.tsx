@@ -1,4 +1,4 @@
-import { experience } from '@data/portfolio';
+import { experience, type Company } from '@data/portfolio';
 import { TRANSLATION_KEYS } from '@i18n/keys';
 import { useTranslation } from '@i18n/useTranslation';
 import { formatPeriod } from '@lib/date';
@@ -19,6 +19,7 @@ export function ExperienceTimeline({ highlightedEntryIds }: ExperienceTimelinePr
       <ol className={styles.timeline}>
         {experience.map((entry) => {
           const isHighlighted = highlightedEntryIds?.has(entry.id) ?? false;
+          const company: Company = entry.company;
           const technologies = [
             ...new Set(entry.technologyPeriods.flatMap((technologyPeriod) => technologyPeriod.technologies)),
           ];
@@ -32,18 +33,18 @@ export function ExperienceTimeline({ highlightedEntryIds }: ExperienceTimelinePr
             >
               <div className={styles.head}>
                 <h3 className={styles.title}>{t(TRANSLATION_KEYS.experience[entry.id].title)}</h3>
-                {entry.company.website
+                {company.website
                   ? (
                       <a
                         className={styles.company}
-                        href={entry.company.website}
+                        href={company.website}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {entry.company.name}
+                        {company.name}
                       </a>
                     )
-                  : <span className={styles.company}>{entry.company.name}</span>}
+                  : <span className={styles.company}>{company.name}</span>}
               </div>
               <p className={styles.meta}>
                 <span>{t(TRANSLATION_KEYS.experience[entry.id].jobTitle)}</span>

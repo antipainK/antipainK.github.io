@@ -1,7 +1,7 @@
 /** English translations — the canonical shape. All keys must exist here. */
 export const en = {
   common: {
-    nav: { experience: 'Experience', education: 'Education', skills: 'Skills', primary: 'Primary' },
+    nav: { experience: 'Experience', education: 'Education', skills: 'Skills', cv: 'CV', primary: 'Primary' },
     sections: { experience: 'Experience', education: 'Education', skills: 'Skills' },
     skipToContent: 'Skip to content',
     language: { label: 'Language' },
@@ -60,5 +60,8 @@ export const en = {
       months: '{{months}} mo',
       yearsAndMonths: '{{years}} yr {{months}} mo',
     },
+  },
+  projects: {
+    notFound: 'Project not found.',
   },
 } as const;

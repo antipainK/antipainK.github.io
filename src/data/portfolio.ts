@@ -136,7 +136,7 @@ export const experience = [
     id: 'genie',
     company: {
       name: 'Genie AI',
-      website: undefined,
+      website: 'https://www.genieai.tech/',
     },
     period: { start: '2023-05-01', end: '2024-03-31' },
     languagePeriods: [
