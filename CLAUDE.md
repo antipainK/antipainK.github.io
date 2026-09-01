@@ -19,7 +19,7 @@ Personal portfolio SPA. Public GitHub user-site: `https://antipaink.github.io/`.
 - **Don't rubber-stamp** a suggestion (mine or a reviewer's) — check it against the actual code first.
 
 ## Stack (current baseline — update freely when warranted)
-Vite + React + TypeScript (strict) · react-router · CSS Modules · react-i18next (3 locales) ·
+Vite + React + TypeScript (strict) · react-router · CSS Modules · react-i18next (2 locales) ·
 Vitest + RTL · ESLint flat config (`@stylistic` formatting, **no Prettier**) · pnpm (Corepack) ·
 Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions → Pages.
 
@@ -57,9 +57,10 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
     nested key groups within it, not separate i18next namespaces — namespaces are overkill at this
     project's size. Type-safe keys are derived from `en`'s shape via `src/i18n/keys.ts` +
     `src/i18n/types.ts` (no `src/i18next.d.ts`).
-  - **New/changed user-facing text:** fill **`en` + `pl`** now; leave `zh-CN` keys empty (they fall
-    back to `en`) and flag them as TODO. Register any new locale in `src/i18n/config.ts` and
-    `src/i18n/resources.ts`.
+  - **New/changed user-facing text:** fill **both `en` and `pl`** — a locale ships complete or not
+    at all. A half-translated locale (Chinese chrome around an English CV) is a worse signal than
+    English-only, which is why `zh-CN` was dropped. Register any new locale in `src/i18n/config.ts`
+    and `src/i18n/resources.ts`.
 - **Routing & prerendering:** `react-router` defines `/` (homepage), `/cv`, `/projects/:slug` (see
   `AppRoutes` in `src/App.tsx`). Page components live in `src/pages/` (`@pages` alias); every routed
   page other than the homepage should call `src/hooks/useDocumentHead.ts` (`@hooks` alias) to set a

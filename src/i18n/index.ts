@@ -11,7 +11,7 @@ void i18n
     resources,
     fallbackLng: DEFAULT_LOCALE,
     supportedLngs: [...SUPPORTED_LOCALES],
-    // Map a bare language to its regional variant, e.g. `zh` → `zh-CN`.
+    // Accept regional variants of a supported language, e.g. `pl-PL` → `pl`.
     nonExplicitSupportedLngs: true,
     defaultNS,
     ns: [defaultNS],

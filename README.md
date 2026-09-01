@@ -10,7 +10,7 @@ Built with React, TypeScript, and Vite, with first-class internationalization.
 - **Vite** + **React** + **TypeScript** (strict)
 - **react-router** for `/`, `/cv`, `/projects/:slug`
 - **CSS Modules** for scoped, zero-runtime styling
-- **react-i18next** — three languages (English, Polski, 简体中文); typed keys derived from `en`
+- **react-i18next** — two languages (English, Polski); typed keys derived from `en`
 - **Vitest** + **React Testing Library**
 - **ESLint** flat config (`@stylistic` for formatting — no Prettier)
 - **Playwright** (dev-only) for build-time prerendering — see [Routing & prerendering](#routing--prerendering)
@@ -79,7 +79,7 @@ src/
     useTranslation.ts      # typed t() wrapper
   locales/
     en.ts                  # canonical translations (source of truth)
-    pl.ts, zh-CN.ts        # PartialTranslations — missing keys fall back to en
+    pl.ts                  # PartialTranslations — missing keys fall back to en
   components/
     layout/                # Layout (react-router Outlet), Navbar, Footer, LanguageSwitcher
     sections/              # Hero, ExperienceTimeline, SkillsSection, EducationList
