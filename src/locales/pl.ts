@@ -70,4 +70,8 @@ export const pl = {
   projects: {
     notFound: 'Nie znaleziono projektu.',
   },
+  notFound: {
+    title: 'Nie znaleziono strony',
+    body: 'Strona, której szukasz, nie istnieje.',
+  },
 } as const satisfies PartialTranslations<Translations>;

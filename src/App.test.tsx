@@ -29,4 +29,11 @@ describe('AppRoutes', () => {
 
     expect(screen.getByText('Project not found.')).toBeInTheDocument();
   });
+
+  it('renders the not-found page inside the usual chrome for an unknown path', () => {
+    renderAt('/no-such-page');
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Page not found' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
+  });
 });

@@ -67,4 +67,8 @@ export const en = {
   projects: {
     notFound: 'Project not found.',
   },
+  notFound: {
+    title: 'Page not found',
+    body: 'The page you were looking for doesn\'t exist.',
+  },
 } as const;

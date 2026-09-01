@@ -31,6 +31,7 @@ Defined in `AppRoutes` (`src/App.tsx`):
 | `/` | `src/pages/HomePage` | Today's homepage (Hero/Experience/Skills/Education), unchanged |
 | `/cv` | `src/pages/CvPage` | **Placeholder text only.** A real dense/print-oriented CV layout is future work |
 | `/projects/:slug` | `src/pages/ProjectPage` | Scaffolded. `src/data/projects.ts` is empty, so every slug currently renders "Project not found." |
+| `*` | `src/pages/NotFoundPage` | Catch-all for unknown paths. Not prerendered — reached via `dist/404.html`, see below |
 
 There is deliberately no `/projects` index/listing page yet (nothing to list) and no locale-in-URL
 (locale stays as client-side `react-i18next` state, not a route segment or query param — this was
@@ -61,6 +62,27 @@ Navbar/Footer chrome. Its only call site is `AppRoutes`.
    property="og:description">`. It *updates* the tags that are already hardcoded in `index.html`
    (found via `document.querySelector`) rather than duplicating them, so the static fallback
    values in `index.html` are sane defaults even before any page-specific override runs.
+
+## Unknown paths: `dist/404.html`
+
+Prerendering only covers paths that *are* routes. For anything else (`/nonsense`, a stale link, a
+typo) GitHub Pages falls back to `404.html`, serving it at the requested URL without a redirect —
+so if that file is the app shell, the SPA boots, the router sees the original path, and the `*`
+route renders `NotFoundPage` inside the normal Navbar/Footer chrome. The visitor gets the site,
+and the response still carries a real HTTP 404.
+
+`dist/404.html` is produced by the `emit-not-found-shell` plugin in `vite.config.ts`, which copies
+`dist/index.html` in `closeBundle` — during `vite build`, before any prerendering. Two traps this
+avoids, both verified rather than assumed:
+
+- **A hand-written `public/404.html` does not work.** Files in `public/` are copied verbatim, never
+  transformed, so the copy would keep `<script type="module" src="/src/main.tsx">` — a path that
+  doesn't exist in a production build. The page would load and do nothing.
+- **The copy must happen before `pnpm prerender`.** That step overwrites `dist/index.html` with the
+  rendered homepage, so a copy taken afterwards would show the homepage under every unknown path.
+
+`NotFoundPage` is deliberately absent from `deriveRoutes` — there's no such route to visit, and its
+snapshot would be the same shell plus one heading.
 
 ## A load-bearing implementation detail: `scripts/` and TypeScript
 
@@ -122,8 +144,6 @@ fine in `pnpm dev`.
 - No `/projects` index/listing page — add one once there's at least one real project.
 - `/cv` has no real layout yet — it's literal placeholder text, waiting on a dense/print-oriented
   design.
-- No custom `public/404.html` for genuinely nonexistent paths — GitHub Pages' default 404 handling
-  is untouched.
 - No PDF export, no locale-in-URL, no market/jurisdiction conventions (photo inclusion, RODO
   clause, etc.) — all considered and explicitly deferred, not forgotten.
 
