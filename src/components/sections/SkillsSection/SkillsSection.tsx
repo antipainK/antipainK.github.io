@@ -5,7 +5,7 @@ import { useTranslation } from '@i18n/useTranslation';
 import { computeLanguageDuration, findEntryIdsUsingTechnology, formatSkillDuration } from '@lib/skills';
 import styles from './SkillsSection.module.css';
 
-const CATEGORY_ORDER: readonly SkillCategory[] = ['language', 'webDevelopment', 'database', 'cloudDevops', 'aiAssisted'];
+const CATEGORY_ORDER: readonly SkillCategory[] = ['language', 'webDevelopment', 'database', 'cloudDevops', 'aiAssisted', 'hardwareProtocols'];
 const timelineEntries = [...experience, ...education];
 
 interface SkillsSectionProps {

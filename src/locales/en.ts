@@ -57,6 +57,7 @@ export const en = {
       database: 'Databases',
       cloudDevops: 'Cloud & DevOps',
       aiAssisted: 'AI-Assisted Development',
+      hardwareProtocols: 'Hardware & Protocols',
     },
     duration: {
       years: '{{years}} yr',

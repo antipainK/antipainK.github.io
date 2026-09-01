@@ -1,9 +1,22 @@
 import { render, screen } from '@testing-library/react';
+import { skillsCatalog } from '@data/portfolio';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { SkillsSection } from './SkillsSection';
 
 describe('SkillsSection', () => {
+  it('renders every catalog skill, so no category can be silently left out of CATEGORY_ORDER', () => {
+    render(<SkillsSection onHighlightChange={vi.fn()} />);
+    // A language button reads "Java 2 yr 5 mo", so match the name or its prefix.
+    const rendered = screen.getAllByRole('button').map((button) => button.textContent ?? '');
+
+    const missing = skillsCatalog
+      .map((skill) => skill.name)
+      .filter((name) => !rendered.some((label) => label === name || label.startsWith(`${name} `)));
+
+    expect(missing).toEqual([]);
+  });
+
   it('renders the section heading, category groups, and skill names', () => {
     render(<SkillsSection onHighlightChange={vi.fn()} />);
 

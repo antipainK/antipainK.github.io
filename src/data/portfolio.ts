@@ -25,10 +25,13 @@ export interface Period {
 }
 
 /** Auto-computed "years of experience" duration (see `@lib/skills`) applies only to this category. */
-export type SkillCategory = 'language' | 'webDevelopment' | 'database' | 'cloudDevops' | 'aiAssisted';
+export type SkillCategory = 'language' | 'webDevelopment' | 'database' | 'cloudDevops' | 'aiAssisted' | 'hardwareProtocols';
 
 export interface Skill {
-  /** Exact display name. For `category: 'language'`, must match the names used in `languagePeriods`. */
+  /**
+   * Exact display name. For `category: 'language'` it must match the names used in
+   * `languagePeriods`; every other category is what `technologyPeriods` reference.
+   */
   name: string;
   category: SkillCategory;
   /**
@@ -54,11 +57,16 @@ export const skillsCatalog = [
   { name: 'Vite', category: 'webDevelopment' },
   { name: 'Node.js', category: 'webDevelopment' },
   { name: 'Flask', category: 'webDevelopment' },
+  { name: 'FastAPI', category: 'webDevelopment' },
+  { name: 'Spring', category: 'webDevelopment' },
+  { name: 'GraphQL', category: 'webDevelopment' },
+  { name: 'XML', category: 'webDevelopment' },
   { name: 'PostgreSQL', category: 'database' },
   { name: 'MySQL', category: 'database' },
   { name: 'NoSQL', category: 'database' },
   { name: 'MongoDB', category: 'database' },
   { name: 'AWS', category: 'cloudDevops' },
+  { name: 'Kubernetes', category: 'cloudDevops' },
   { name: 'GitLab CI', category: 'cloudDevops' },
   { name: 'RenovateBot', category: 'cloudDevops' },
   { name: 'Splunk', category: 'cloudDevops' },
@@ -68,11 +76,21 @@ export const skillsCatalog = [
   { name: 'Cursor', category: 'aiAssisted' },
   { name: 'Windsurf', category: 'aiAssisted' },
   { name: 'Gemini', category: 'aiAssisted' },
+  { name: 'VXI-11', category: 'hardwareProtocols' },
 ] as const satisfies readonly Skill[];
 
 /** Language names known to the catalog — keeps `languagePeriods` honest at compile time. */
 type LanguageSkill = Extract<(typeof skillsCatalog)[number], { category: 'language' }>;
 export type KnownProgrammingLanguage = LanguageSkill['name'];
+
+/**
+ * Everything in the catalog that isn't a programming language — the same
+ * compile-time guarantee for `technologyPeriods`. The catalog is meant to be a
+ * complete, entry-backed inventory, so a technology used in an entry belongs in
+ * it by definition; trimming what's *shown* is a display concern, not a data one.
+ */
+type TechnologySkill = Exclude<(typeof skillsCatalog)[number], { category: 'language' }>;
+export type KnownTechnology = TechnologySkill['name'];
 
 /** A date range during which a specific set of languages was in use within one entry. */
 export interface LanguagePeriod {
@@ -85,7 +103,7 @@ export interface LanguagePeriod {
 export interface TechnologyPeriod {
   /** Defaults to the parent entry's own `period` when omitted (i.e. used for the whole entry). */
   period?: Period;
-  technologies: readonly string[];
+  technologies: readonly KnownTechnology[];
 }
 
 interface TimelineEntryBase {

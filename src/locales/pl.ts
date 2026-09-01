@@ -60,6 +60,7 @@ export const pl = {
       database: 'Bazy danych',
       cloudDevops: 'Cloud i DevOps',
       aiAssisted: 'Rozwój wspomagany AI',
+      hardwareProtocols: 'Sprzęt i protokoły',
     },
     duration: {
       years: '{{years}} lat',

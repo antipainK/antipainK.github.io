@@ -61,6 +61,14 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
     at all. A half-translated locale (Chinese chrome around an English CV) is a worse signal than
     English-only, which is why `zh-CN` was dropped. Register any new locale in `src/i18n/config.ts`
     and `src/i18n/resources.ts`.
+- **`skillsCatalog` is the provable inventory:** every technology named in an entry's
+  `technologyPeriods` must exist in the catalog — enforced at compile time by `KnownTechnology`, not
+  just by a test. The reverse holds too: every catalog skill should be backed by an entry (or an
+  explicit `additionalPeriods` window), with `KNOWN_UNPROVEN` in `src/data/portfolio.test.ts` as the
+  temporary debt list for entries not yet written — it may shrink, never grow. Choosing which skills
+  to *display* (hiding brief exposures, top-N) is a display concern; don't solve it by leaving data
+  out. A new `SkillCategory` must also be added to `CATEGORY_ORDER` in `SkillsSection.tsx`, or its
+  skills silently render nowhere.
 - **Routing & prerendering:** `react-router` defines `/` (homepage), `/cv`, `/projects/:slug` (see
   `AppRoutes` in `src/App.tsx`). Page components live in `src/pages/` (`@pages` alias); every routed
   page other than the homepage should call `src/hooks/useDocumentHead.ts` (`@hooks` alias) to set a
