@@ -17,7 +17,12 @@ void i18n
     ns: [defaultNS],
     interpolation: { escapeValue: false },
     detection: {
-      order: ['localStorage', 'navigator'],
+      // ?lang=<supported-locale> overrides for that visit and becomes sticky
+      // (cached to localStorage, same as any other detected language);
+      // an unsupported value is skipped by i18next's own supportedLngs
+      // matching, falling through to localStorage then navigator.
+      order: ['querystring', 'localStorage', 'navigator'],
+      lookupQuerystring: 'lang',
       caches: ['localStorage'],
     },
     react: { useSuspense: false },
