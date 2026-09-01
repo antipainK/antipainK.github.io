@@ -20,6 +20,9 @@ export const en = {
       tagline: 'I build reliable, accessible web applications.',
     },
   },
+  cv: {
+    title: 'CV',
+  },
   experience: {
     qualtrics: {
       jobTitle: 'Software Engineer I',

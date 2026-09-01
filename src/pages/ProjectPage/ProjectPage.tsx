@@ -18,7 +18,7 @@ export function ProjectPage() {
   });
 
   if (!project) {
-    return <p>{t(TRANSLATION_KEYS.projects.notFound)}</p>;
+    return <h1>{t(TRANSLATION_KEYS.projects.notFound)}</h1>;
   }
 
   return (

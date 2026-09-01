@@ -23,6 +23,9 @@ export const pl = {
       tagline: 'Tworzę niezawodne i dostępne aplikacje internetowe.',
     },
   },
+  cv: {
+    title: 'CV',
+  },
   experience: {
     qualtrics: {
       jobTitle: 'Software Engineer I',

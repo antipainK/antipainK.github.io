@@ -23,10 +23,10 @@ function renderAtSlug(slug: string) {
 }
 
 describe('ProjectPage', () => {
-  it('renders a not-found message for an unknown slug', () => {
+  it('renders a not-found heading for an unknown slug', () => {
     renderAtSlug('does-not-exist');
 
-    expect(screen.getByText('Project not found.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Project not found.' })).toBeInTheDocument();
   });
 
   it('renders the project name and summary for a known slug', () => {
