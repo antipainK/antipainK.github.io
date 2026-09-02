@@ -81,9 +81,12 @@ src/
     en.ts                  # canonical translations (source of truth)
     pl.ts                  # PartialTranslations — missing keys fall back to en
   components/
-    layout/                # Layout (react-router Outlet), Rail, Footer, LanguageSwitcher
+    layout/                # Layout (owns the skill filter), Header, Rail, Footer, LanguageSwitcher
     sections/              # Hero, ExperienceTimeline, SkillsSection, EducationList
-  lib/                     # small utilities (date/duration formatting, skill lookups)
+  lib/
+    date.ts, duration.ts   # date and whole-month formatting
+    skills.ts              # data-agnostic duration / last-used / lookup helpers
+    skillFilter.ts         # the same logic bound to the real catalog and timeline
   tokens.css               # design tokens — the only file with raw colour values
   index.css                # global reset and element defaults
 scripts/

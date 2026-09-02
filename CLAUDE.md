@@ -32,6 +32,13 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
 - `pnpm lint` / `pnpm lint:fix`
 - `pnpm typecheck` — `tsc -b`
 - `pnpm test` (watch) / `pnpm test:ci` (once)
+- `pnpm screenshot:diacritics` — renders the Polish pangram in every loaded face and weight and
+  writes `diacritics.png` (gitignored); also prints any request that left the origin. Same
+  requirements as `pnpm prerender`.
+
+> **`pnpm` itself is not on `PATH`** — it is Corepack-managed with no shim, so a non-interactive
+> shell gets `command not found`. **`corepack pnpm <script>` works with no setup**; `corepack` and
+> `node` are both already on `PATH`. Don't go hunting for a Node install or export a `PATH` prefix.
 
 ## Workflow rules
 - **Never `git commit` or `git push`.** Stage changes and suggest a commit message; the owner
@@ -82,7 +89,15 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
     project's size. Type-safe keys are derived from `en`'s shape via `src/i18n/keys.ts` +
     `src/i18n/types.ts` (no `src/i18next.d.ts`).
   - **Arrays are leaves, not branches.** An entry's `highlights` bullet list is one addressable
-    key; read it with `tList()` from `@i18n/useTranslation`, not `t()`.
+    key; read it with `tList()` from `@i18n/useTranslation`, not `t()`. `TranslationKey` and
+    `TranslationListKey` are separate unions, so `t(listKey)` and `tList(stringKey)` are both
+    compile errors rather than a blank bullet or `[object Object]` on the page.
+  - **Any string that interpolates a count needs Polish plural forms.** Polish has three cardinal
+    categories (`1 rok`, `2 lata`, `5 lat`) where English has one invariant form, so `en` declares
+    the key once and `pl` adds `_one` / `_few` / `_many`; `PartialTranslations` admits those
+    suffixes even though `en` lacks them. **The call site must pass `count`** — without it i18next
+    never selects a form and Polish silently renders one fixed (usually wrong) case. Abbreviations
+    like `mies.` do not inflect and need no forms. See `src/lib/duration.i18n.test.ts`.
   - **New/changed user-facing text:** fill **both `en` and `pl`** — a locale ships complete or not
     at all. A half-translated locale (Chinese chrome around an English CV) is a worse signal than
     English-only, which is why `zh-CN` was dropped. Register any new locale in `src/i18n/config.ts`
@@ -97,6 +112,22 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
   skills silently render nowhere. Categories need more than one member to be worth having — the
   one-item `hardwareProtocols` group was folded into `infrastructure` because a category holding a
   single chip reads as a mistake.
+- **Derived data: sample the clock once, and derive outside the render.** Every helper in
+  `@lib/skills` defaults `now` to `new Date()`, which is a **default argument evaluated per call** —
+  deriving a list by calling them per item samples a different instant for each one. That shipped
+  as a real bug: two languages both still in use resolved `lastUsed` a millisecond apart, so the
+  recency tiebreak reordered the skill bars on every render. `orderLanguages(now)` in
+  `@lib/skillFilter` takes one instant and threads it through, which makes equal things compare
+  equal so `Array#sort`'s stability falls back to catalog order. It is called **once at module
+  load**, not per render. Pass `now` explicitly in tests.
+  - `@lib/skills` stays data-agnostic (entries in, numbers out) and is unit-tested with fixtures;
+    `@lib/skillFilter` is the same logic **bound to the real catalog and timeline**, so components
+    and `Layout` can share it without importing each other. Keep that seam.
+- **Colour tokens carry their measured contrast ratio in a comment.** They are measured against
+  `--paper`, not copied from a design file — the ratios in the source mockup were optimistic by up
+  to 0.8 and `--ink-faint` was briefly below 4.5:1 because of it. Every one of these carries text
+  at 13px, so the bar is WCAG 1.4.3 AA at **4.5:1**, with no large-text exemption. Re-measure and
+  update the comment when you change a value.
 - **Layout:** a sticky `Header` (site chrome: CV link, language `<select>`, active-filter status)
   above a three-child `.shell` grid — `Rail` (`identity`), `SkillsSection` (`skills`) and `<main>`.
   Three grid children rather than a nested rail so the skills panel can be reordered independently
