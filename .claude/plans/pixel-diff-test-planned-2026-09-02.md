@@ -16,16 +16,28 @@ is untouched — it still only triggers on `push: master` / `workflow_dispatch`;
 this repo has no pull_request-triggered CI at all today, and adding one felt
 like a bigger decision than "add a test."
 
-**No cross-platform baseline strategy.** Playwright screenshots differ
-subtly across OS (font hinting/antialiasing, subpixel rendering). A baseline
-generated locally on macOS will very likely mismatch if the test is later run
-on a Linux CI runner — even with zero real UI change. If/when this gets wired
-into CI, decide one of:
+**No cross-platform baseline strategy — and the filename no longer guards
+against it.** Playwright screenshots differ subtly across OS (font
+hinting/antialiasing, subpixel rendering). A baseline generated locally on
+macOS will very likely mismatch if the test is later run on a Linux CI
+runner — even with zero real UI change. Playwright's default snapshot naming
+includes a `{-projectName}{-platform}` suffix specifically to guard against
+this (a second OS gets its own `homepage-chromium-linux.png` instead of
+silently comparing against the macOS one). `playwright.config.ts` overrides
+`snapshotPathTemplate` to drop that suffix (2026-09-02, requested to avoid
+`-darwin` in the filename while this is single-machine/local-only) — the
+baseline is just `homepage.png` now. That's fine as long as this only ever
+runs on one machine, but it means **the safety net is gone**: if this is ever
+run on a second platform before this is revisited, it will compare against
+the wrong-OS baseline instead of telling you no baseline exists for it. If/
+when this gets wired into CI, decide one of:
 - Generate baselines via Playwright's official Docker image (matching
   whatever OS the CI runner uses) instead of running natively on macOS, so the
   committed PNG actually matches what CI would render.
 - Or run the visual test only where it's generated (i.e., never in a
   different-OS CI runner) and accept that constraint.
+- Either way, reconsider whether `snapshotPathTemplate` should keep dropping
+  the platform suffix once more than one OS is in play.
 
 ## Revisit when
 

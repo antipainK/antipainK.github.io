@@ -20,9 +20,8 @@
     "test:ci": "vitest run",
     "typecheck": "tsc -b",
     "prerender": "node scripts/prerender.mjs",
-    "screenshot:diacritics": "node scripts/screenshotDiacritics.mjs",
     "test:visual": "playwright test",
-    "test:visual:update": "playwright test --update-snapshots"
+    "screenshots:update": "node scripts/screenshotDiacritics.mjs && node scripts/screenshotReadme.mjs && playwright test --update-snapshots"
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans": "^5.3.0",

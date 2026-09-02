@@ -32,15 +32,19 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
 - `pnpm lint` / `pnpm lint:fix`
 - `pnpm typecheck` — `tsc -b`
 - `pnpm test` (watch) / `pnpm test:ci` (once)
-- `pnpm screenshot:diacritics` — renders the Polish pangram in every loaded face and weight and
-  writes `diacritics.png` (gitignored); also prints any request that left the origin. Same
-  requirements as `pnpm prerender`.
 - `pnpm test:visual` — pixel-diffs the homepage against the committed baseline in
   `e2e/visual.spec.ts-snapshots/` (`@playwright/test`'s `toHaveScreenshot()`; config in
-  `playwright.config.ts`). `pnpm test:visual:update` regenerates the baseline after an intentional
-  UI change — commit the updated PNG so reviewers see the actual pixel diff in the MR. Local-only
-  for now (no CI gate, no cross-platform baseline story) — see
+  `playwright.config.ts`). `snapshotPathTemplate` drops Playwright's default
+  `{-projectName}{-platform}` suffix (so the file is `homepage.png`, not
+  `homepage-chromium-darwin.png`) since this suite has one project on one machine; revisit that
+  template if a second platform ever needs its own baseline. Local-only for now (no CI gate) — see
   `.claude/plans/pixel-diff-test-planned-2026-09-02.md`. Same requirements as `pnpm prerender`.
+- `pnpm screenshots:update` — regenerates every screenshot output in one pass, since they're meant
+  to move together rather than drift out of sync one script at a time: `diacritics.png` (gitignored
+  local font-loading check, `scripts/screenshotDiacritics.mjs`), `docs/homepage-preview.png`
+  (committed, shown in `README.md`, `scripts/screenshotReadme.mjs`), then the `pnpm test:visual`
+  baseline itself (`playwright test --update-snapshots`). Commit whichever of the committed outputs
+  actually changed. Same requirements as `pnpm prerender`.
 
 > **`pnpm` itself is not on `PATH`** — it is Corepack-managed with no shim, so a non-interactive
 > shell gets `command not found`. **`corepack pnpm <script>` works with no setup**; `corepack` and
@@ -81,7 +85,7 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
   reason to take on. **Every weight must be imported as both `latin-` and `latin-ext-`** — Polish
   diacritics (ł ą ę ś ż ź ć ń) live in `latin-ext`, so a latin-only weight renders them from a
   fallback face mid-word. `ó` is in basic latin, which is what makes this easy to miss. Guarded by
-  `src/fonts.test.ts`; check it visually with `pnpm screenshot:diacritics` (needs a real browser).
+  `src/fonts.test.ts`; check it visually with `pnpm screenshots:update` (needs a real browser).
   Font assets build to stable unhashed names under `dist/assets/fonts/` so `vite.config.ts` can
   preload the three above-the-fold files.
 - **Records vs. cards is deliberate.** Experience and education are *records*: hairline rules, no

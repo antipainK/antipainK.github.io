@@ -10,6 +10,11 @@ const PORT = 4175;
 
 export default defineConfig({
   testDir: './e2e',
+  // Default template appends {-projectName}{-platform} (e.g. "-chromium-darwin").
+  // This suite runs one project on one machine (local-only, see
+  // .claude/plans/pixel-diff-test-planned-2026-09-02.md) so a platform-qualified
+  // filename only adds confusion, not safety -- drop both.
+  snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   use: {
     baseURL: `http://localhost:${PORT}`,
   },

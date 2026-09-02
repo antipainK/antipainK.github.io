@@ -5,6 +5,8 @@ Built with React, TypeScript, and Vite, with first-class internationalization.
 
 🔗 Live: https://antipaink.github.io/
 
+![Homepage preview](docs/homepage-preview.png)
+
 ## Tech stack
 
 - **Vite** + **React** + **TypeScript** (strict)
@@ -59,6 +61,7 @@ pnpm preview     # serve the production build locally
 | `pnpm test:ci` | Run Vitest once (CI mode) |
 | `pnpm typecheck` | Type-check without emitting |
 | `pnpm prerender` | Build-time prerender (`dist/` must already exist — run `pnpm build` first) |
+| `pnpm screenshots:update` | Regenerate every screenshot output, incl. `docs/homepage-preview.png` (`dist/` must already exist) |
 
 One-time per machine before the first `pnpm prerender`: `pnpm exec playwright install chromium`.
 
@@ -93,6 +96,7 @@ scripts/
   deriveRoutes.ts          # pure route-list derivation, used by prerender.mjs
   prerender.mjs            # build-time prerender (see Routing & prerendering below)
   screenshotDiacritics.mjs # renders the Polish pangram to check latin-ext loads
+  screenshotReadme.mjs     # regenerates docs/homepage-preview.png shown above
 ```
 
 Facts (dates, company names, tech tags, links) live in `data/portfolio.ts`/`data/projects.ts`; the
