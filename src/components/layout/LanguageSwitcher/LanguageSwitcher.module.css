@@ -1,19 +1,21 @@
 .switcher {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--s-2);
 }
 
 .label {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
 }
 
-.switcher select {
+.select {
   font: inherit;
-  padding: var(--space-1) var(--space-2);
-  color: var(--color-text);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  padding: var(--s-1) var(--s-2);
+  color: var(--ink);
+  background-color: var(--paper-sunken);
+  /* A control boundary, so it needs 3:1 against the page — not --rule. */
+  border: var(--hairline) solid var(--border-control);
   border-radius: var(--radius);
 }

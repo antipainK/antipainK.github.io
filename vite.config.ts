@@ -23,11 +23,49 @@ function emitNotFoundShell(): Plugin {
   };
 }
 
+/**
+ * Fonts the homepage needs for its first paint: the rail name and the hero
+ * statement are display serif, everything else in the rail is sans 400.
+ * `latin-ext` is in the list because "Kosztyła" is above the fold — without it
+ * the ł arrives a beat late in a fallback face, mid-surname.
+ *
+ * Injected at build time only: in dev these files are served straight from
+ * node_modules under different URLs, so a static tag would just 404.
+ */
+const PRELOADED_FONTS = [
+  'ibm-plex-serif-latin-600-normal.woff2',
+  'ibm-plex-serif-latin-ext-600-normal.woff2',
+  'ibm-plex-sans-latin-400-normal.woff2',
+];
+
+function injectFontPreloads(): Plugin {
+  return {
+    name: 'inject-font-preloads',
+    apply: 'build',
+    transformIndexHtml: () => PRELOADED_FONTS.map((file) => ({
+      tag: 'link',
+      attrs: { rel: 'preload', as: 'font', type: 'font/woff2', href: `/assets/fonts/${file}`, crossorigin: '' },
+      injectTo: 'head-prepend' as const,
+    })),
+  };
+}
+
 // `test` is typed via Vitest while `defineConfig`/`react()` stay on Vite's own
 // types, avoiding the dual Vite-version type clash from `vitest/config`.
 const config: UserConfig & { test: InlineConfig } = {
   base: '/',
-  plugins: [react(), emitNotFoundShell()],
+  plugins: [react(), emitNotFoundShell(), injectFontPreloads()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Fonts keep stable, unhashed names so the preload tags above can
+        // address them. They are versioned by the package, not by content.
+        assetFileNames: (asset) => (/\.woff2?$/.test(asset.names?.[0] ?? '')
+          ? 'assets/fonts/[name][extname]'
+          : 'assets/[name]-[hash][extname]'),
+      },
+    },
+  },
   resolve: {
     alias: {
       '@i18n': fileURLToPath(new URL('./src/i18n', import.meta.url)),

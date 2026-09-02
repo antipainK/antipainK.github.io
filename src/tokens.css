@@ -1,0 +1,140 @@
+/* ============================================================
+   Design tokens — the source of truth for colour, type and
+   spacing. Direction: technical drafting document. Measured,
+   precise, quiet.
+
+   No component may declare a raw colour. If a value is missing
+   here, add it here rather than inlining it at the call site.
+   ============================================================ */
+
+:root {
+  /*
+   * Light is the only theme. A visitor whose OS is in dark mode must still get
+   * light scrollbars and light native form controls against this light page,
+   * so this is pinned rather than left as `light dark`.
+   */
+  color-scheme: light;
+
+  /* ---- Typefaces -------------------------------------------
+     Two families from one superfamily: clearly distinct on the
+     page (serif vs sans) but harmonised in metrics and colour.
+     IBM Plex comes out of engineering documentation, which is
+     the vernacular this site is borrowing from.
+     Self-hosted via @fontsource; see `src/main.tsx` for the
+     imported weights. The stacks below degrade to system faces
+     if a webfont fails to load.
+  ---------------------------------------------------------- */
+  --font-display: 'IBM Plex Serif', georgia, 'Times New Roman', serif;
+  --font-ui: 'IBM Plex Sans', -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, helvetica, arial, sans-serif;
+
+  /* ---- Type scale — major third (1.25), 16px base --------- */
+  --text-xs: 0.75rem;      /* 12 — ticks, footnotes only */
+  --text-sm: 0.8125rem;    /* 13 — meta, captions */
+  --text-copy: 0.9375rem;  /* 15 — running copy: bullets, notes */
+  --text-base: 1rem;       /* 16 — body default */
+  --text-md: 1.25rem;      /* 20 — entry titles */
+  --text-lg: 1.5625rem;    /* 25 */
+  --text-xl: 1.9375rem;    /* 31 — section headings */
+  --text-2xl: 2.4375rem;   /* 39 — hero statement */
+  --text-3xl: 3.0517rem;   /* 49 — hero pull-out figures */
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-copy: 1.5;     /* running copy — tighter than default body */
+  --leading-body: 1.6;
+
+  --tracking-tight: -0.015em;  /* display sizes only */
+  --tracking-normal: 0;
+
+  /* ---- Spacing — 4px base ---------------------------------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+
+  /* ---- Layout ---------------------------------------------- */
+  --measure: 68ch;         /* max line length for body prose */
+  /* Roughly a third of --content-max, matching the sidebar in the PDF CV. */
+  --rail-width: 360px;
+  /* Approximate: only used to offset sticky tops and scroll targets below the header. */
+  --header-height: 44px;
+  --content-max: 1140px;
+  --radius: 3px;           /* deliberately small — drafting, not SaaS */
+  --radius-card: 6px;
+  --hairline: 1px;
+  --portrait-size: 96px;
+
+  /* ---- Motion ---------------------------------------------- */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ============================================================
+   Light — drafting paper. Currently the only theme.
+   A CV is printed, read in daylight, and forwarded by people on
+   corporate laptops. Light-first also makes print trivial.
+
+   Re-adding dark is deliberately one block in one file: add a
+   `[data-theme='dark']` block below overriding these same names,
+   and nothing in any component has to change. That only holds as
+   long as components keep reading tokens and never inline a hex.
+   ============================================================ */
+:root {
+  /*
+   * Contrast ratios below are measured against --paper, not copied from a
+   * spec sheet. Every one of these carries text at --text-sm (13px), so the
+   * bar is WCAG 1.4.3 AA at 4.5:1 — there is no large-text exemption here.
+   * Re-measure if you change a value; the numbers in the source mockup were
+   * optimistic by up to 0.8 and --ink-faint shipped below the line because
+   * of it.
+   */
+  --paper: #fafaf8;         /* page */
+  --paper-raised: #ffffff;  /* project cards, popovers */
+  --paper-sunken: #f1f2f0;  /* chips, inactive bars */
+
+  --ink: #14181f;           /* body text        — 17.03:1 on paper */
+  --ink-muted: #545c68;     /* meta, secondary  —  6.47:1 */
+  --ink-faint: #6b7382;     /* ticks, hints     —  4.57:1, AA at 13px */
+
+  --rule: #dcdfe3;          /* decorative hairline — 1.28:1, never a control edge */
+  --rule-strong: #b4bac3;   /* emphasised divider  — 1.87:1, likewise */
+  --border-control: #8b929c; /* chip and button boundaries — 3.00:1, WCAG 1.4.11 */
+
+  --accent: #1b4fa8;        /* drafting blue    —  7.36:1 on paper */
+  --accent-hover: #143c80;  /* 10.11:1 */
+  --accent-tint: #e7eef9;   /* span-bar fill, active chip */
+  --accent-ink: #123368;    /* text on accent-tint — 10.59:1 */
+  --on-accent: #ffffff;     /* on --accent — 7.69:1 */
+}
+
+/* ============================================================
+   Print — always light, always single column.
+   Multi-column layouts break ATS parsers.
+   ============================================================ */
+@media print {
+  :root {
+    --paper: #ffffff;
+    --paper-raised: #ffffff;
+    --paper-sunken: #ffffff;
+
+    --ink: #000000;
+    --ink-muted: #333333;
+    --ink-faint: #555555;
+
+    --rule: #bbbbbb;
+    --rule-strong: #888888;
+    --border-control: #888888;
+
+    --accent: #10346e;
+    --accent-hover: #10346e;
+    --accent-tint: #ffffff;
+    --accent-ink: #10346e;
+    --on-accent: #ffffff;
+  }
+}

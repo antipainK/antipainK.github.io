@@ -1,0 +1,100 @@
+/*
+ * Sticky: these are the controls for changing language and leaving the page,
+ * so they have to stay reachable from the bottom of a long CV. Opaque rather
+ * than translucent — content scrolling under a see-through bar reads as a
+ * rendering fault.
+ */
+.headerBar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--paper);
+  border-bottom: var(--hairline) solid var(--rule);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--s-2) var(--s-5);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex: 0 0 auto;
+}
+
+.nav {
+  display: flex;
+  gap: var(--s-4);
+  font-size: var(--text-sm);
+}
+
+/* Holds its row height whether or not a filter is active, so pinning a chip
+   never shifts the page under the pointer. */
+.filterStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+  min-height: 1.75rem;
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.filterText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clear {
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: 2px var(--s-2);
+  background-color: transparent;
+  color: var(--ink);
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.clear:hover {
+  background-color: var(--paper-sunken);
+}
+
+.link {
+  color: var(--ink-muted);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--ink);
+}
+
+.link[aria-current='page'] {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+@media (max-width: 860px) {
+  .header {
+    padding: var(--s-2) var(--s-4);
+  }
+}
+
+/* Chrome, not CV content. A printed CV carries neither the language control
+   nor a link to itself. */
+@media print {
+  .headerBar {
+    display: none;
+  }
+}

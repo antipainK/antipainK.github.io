@@ -75,18 +75,21 @@ src/
   i18n/
     config.ts              # SUPPORTED_LOCALES, DEFAULT_LOCALE, LOCALE_LABELS
     resources.ts           # assembles i18next resources from the locale files
-    keys.ts                # TRANSLATION_KEYS + TranslationKey (derived from en)
-    useTranslation.ts      # typed t() wrapper
+    keys.ts                # TRANSLATION_KEYS + TranslationKey / TranslationListKey (derived from en)
+    useTranslation.ts      # typed t() wrapper, plus tList() for bullet lists
   locales/
     en.ts                  # canonical translations (source of truth)
     pl.ts                  # PartialTranslations — missing keys fall back to en
   components/
-    layout/                # Layout (react-router Outlet), Navbar, Footer, LanguageSwitcher
+    layout/                # Layout (react-router Outlet), Rail, Footer, LanguageSwitcher
     sections/              # Hero, ExperienceTimeline, SkillsSection, EducationList
   lib/                     # small utilities (date/duration formatting, skill lookups)
+  tokens.css               # design tokens — the only file with raw colour values
+  index.css                # global reset and element defaults
 scripts/
   deriveRoutes.ts          # pure route-list derivation, used by prerender.mjs
   prerender.mjs            # build-time prerender (see Routing & prerendering below)
+  screenshotDiacritics.mjs # renders the Polish pangram to check latin-ext loads
 ```
 
 Facts (dates, company names, tech tags, links) live in `data/portfolio.ts`/`data/projects.ts`; the

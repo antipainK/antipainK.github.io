@@ -21,7 +21,8 @@ Personal portfolio SPA. Public GitHub user-site: `https://antipaink.github.io/`.
 ## Stack (current baseline — update freely when warranted)
 Vite + React + TypeScript (strict) · react-router · CSS Modules · react-i18next (2 locales) ·
 Vitest + RTL · ESLint flat config (`@stylistic` formatting, **no Prettier**) · pnpm (Corepack) ·
-Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions → Pages.
+Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions → Pages ·
+`@fontsource/ibm-plex-sans` + `@fontsource/ibm-plex-serif` (self-hosted webfonts, no Google Fonts).
 
 ## Commands
 - `pnpm dev` — dev server
@@ -47,8 +48,31 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
 ## Conventions
 - **Colocated components:** each in its own folder with `Foo.tsx`, `Foo.module.css`, `Foo.test.tsx`
   under `src/components/{layout,sections}/`.
-- **CSS Modules only** for component styles; global tokens/reset in `src/index.css` (CSS custom
-  properties, light/dark via `prefers-color-scheme`).
+- **Design tokens live in `src/tokens.css`**, imported by `src/index.css` (which holds only the
+  reset and element defaults). `tokens.css` is the single source of truth for colour, type and
+  spacing: **a raw hex, rgb() or named colour in a component file is a defect.** If a value is
+  missing, add it to `tokens.css` rather than inlining it at the call site.
+- **CSS Modules only** for component styles.
+- **Light theme only.** There is no dark mode, no toggle and no `prefers-color-scheme` handling.
+  `:root` pins `color-scheme: light` on purpose — without it a visitor whose OS is in dark mode
+  gets dark scrollbars and dark native form controls against a light page. Re-adding dark must
+  stay a one-block change in `tokens.css` (a `[data-theme="dark"]` block overriding the same token
+  names), which is only true while components read tokens and never inline a colour.
+- **Control borders use `--border-control`, never `--rule`.** Chip and button boundaries need 3:1
+  contrast against their background (WCAG 1.4.11); `--rule` sits around 1.2:1 and disappears for
+  low-vision readers.
+- **Never de-emphasise text with `opacity`** — it fails contrast. Use `--ink-muted` / `--ink-faint`.
+- **Fonts are self-hosted via `@fontsource`, imported in `src/main.tsx`.** No Google Fonts link:
+  loading from `fonts.gstatic.com` sends visitor IPs to Google, a GDPR exposure this site has no
+  reason to take on. **Every weight must be imported as both `latin-` and `latin-ext-`** — Polish
+  diacritics (ł ą ę ś ż ź ć ń) live in `latin-ext`, so a latin-only weight renders them from a
+  fallback face mid-word. `ó` is in basic latin, which is what makes this easy to miss. Guarded by
+  `src/fonts.test.ts`; check it visually with `pnpm screenshot:diacritics` (needs a real browser).
+  Font assets build to stable unhashed names under `dist/assets/fonts/` so `vite.config.ts` can
+  preload the three above-the-fold files.
+- **Records vs. cards is deliberate.** Experience and education are *records*: hairline rules, no
+  surface, title and org on one line with dates right-aligned. Cards (a raised surface) are
+  reserved for project work. Don't unify them.
 - **i18n — facts vs copy:**
   - Language-invariant facts (dates, company names, tech tags, links, ids) → `src/data/portfolio.ts`.
   - Translatable prose → `src/locales/<lng>.ts`, keyed by entry id; components read facts from
@@ -57,6 +81,8 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
     nested key groups within it, not separate i18next namespaces — namespaces are overkill at this
     project's size. Type-safe keys are derived from `en`'s shape via `src/i18n/keys.ts` +
     `src/i18n/types.ts` (no `src/i18next.d.ts`).
+  - **Arrays are leaves, not branches.** An entry's `highlights` bullet list is one addressable
+    key; read it with `tList()` from `@i18n/useTranslation`, not `t()`.
   - **New/changed user-facing text:** fill **both `en` and `pl`** — a locale ships complete or not
     at all. A half-translated locale (Chinese chrome around an English CV) is a worse signal than
     English-only, which is why `zh-CN` was dropped. Register any new locale in `src/i18n/config.ts`
@@ -68,11 +94,34 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
   temporary debt list for entries not yet written — it may shrink, never grow. Choosing which skills
   to *display* (hiding brief exposures, top-N) is a display concern; don't solve it by leaving data
   out. A new `SkillCategory` must also be added to `CATEGORY_ORDER` in `SkillsSection.tsx`, or its
-  skills silently render nowhere.
+  skills silently render nowhere. Categories need more than one member to be worth having — the
+  one-item `hardwareProtocols` group was folded into `infrastructure` because a category holding a
+  single chip reads as a mistake.
+- **Layout:** a sticky `Header` (site chrome: CV link, language `<select>`, active-filter status)
+  above a three-child `.shell` grid — `Rail` (`identity`), `SkillsSection` (`skills`) and `<main>`.
+  Three grid children rather than a nested rail so the skills panel can be reordered independently
+  at ≤860px, where it drops **below** `<main>`: burying the hero under ~25 filter chips is the
+  wrong first impression on a phone. Don't reach for `display: contents` to do this — it has a
+  history of dropping the banner landmark from the a11y tree.
+  - The rail holds name, role, location, portrait and contact links. Its name is the page's `<h1>`
+    **only on the homepage** — every other route has a real `<h1>` and the rail must not shadow it.
+  - The rail is `<header>` (the `banner`); the top bar is a plain `<div>` on purpose, because a
+    second `<header>` at that level would announce a duplicate banner landmark.
+  - **The rail is `position: static` by default**, sticky only above `min-height: 1100px`. With the
+    skills panel beside it the left column runs to ~1000px, and a sticky element taller than the
+    viewport pins at `top` and leaves its lower half permanently unreachable. The height query is
+    deliberate — it beats picking one behaviour for every screen, and avoids an internal scrollbar.
+- **The skill filter is owned by `Layout`**, not by a page: its three parties live in different
+  subtrees (chips in the rail, status and Clear in the header, dimming in the routed page). It
+  reaches the page through `Outlet` context (`LayoutOutletContext`). Only a **pinned** chip filters
+  — dimming on hover flickers as the pointer crosses chips. Non-matches recede via `--ink-faint`,
+  never `opacity`, and the header's `role="status"` region is always in the DOM so assistive tech
+  observes it from first paint. A reader must never see a dimmed page with no stated reason.
 - **Routing & prerendering:** `react-router` defines `/` (homepage), `/cv`, `/projects/:slug` (see
   `AppRoutes` in `src/App.tsx`). Page components live in `src/pages/` (`@pages` alias); every routed
   page other than the homepage should call `src/hooks/useDocumentHead.ts` (`@hooks` alias) to set a
-  real `<title>`/OG tags — `HomePage` is the one exception, since `index.html`'s static tags already
+  real `<title>`/OG tags — pages that set no description fall back to `DEFAULT_DESCRIPTION` rather
+  than shipping none. `HomePage` is the one exception, since `index.html`'s static tags already
   describe it exactly and prerendering writes its snapshot to `dist/index.html` directly. GitHub Pages has
   no server-side rewrites, so client routing alone would 404 on a direct hit/refresh to `/cv` — the
   fix is build-time prerendering: `scripts/prerender.mjs` (Playwright + Vite's `preview()`) visits

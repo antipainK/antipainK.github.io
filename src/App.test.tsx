@@ -15,7 +15,8 @@ describe('AppRoutes', () => {
   it('renders the homepage at /', () => {
     renderAt('/');
 
-    expect(screen.getByRole('heading', { level: 2, name: /experience/i })).toBeInTheDocument();
+    // Anchored: the hero statement also contains the word "experience".
+    expect(screen.getByRole('heading', { level: 2, name: /^experience$/i })).toBeInTheDocument();
   });
 
   it('renders the CV placeholder at /cv', () => {

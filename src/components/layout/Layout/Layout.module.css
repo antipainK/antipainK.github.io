@@ -8,27 +8,77 @@
 .skipLink {
   position: absolute;
   top: -4rem;
-  left: var(--space-2);
+  left: var(--s-4);
   z-index: 20;
-  padding: var(--space-2) var(--space-3);
-  color: var(--color-accent-contrast);
-  background-color: var(--color-accent);
+  padding: var(--s-2) var(--s-4);
+  color: var(--on-accent);
+  background-color: var(--accent);
   border-radius: var(--radius);
-  transition: top 0.15s ease;
+  transition: top var(--dur-fast) var(--ease);
 }
 
 .skipLink:focus-visible {
-  top: var(--space-2);
+  top: var(--s-4);
+  color: var(--on-accent);
+}
+
+/*
+ * Left column (identity, then the skills panel) beside a scrolling content
+ * column. Three grid children rather than one nested rail, so the skills panel
+ * can be reordered independently at narrow widths without `display: contents`,
+ * which has a history of dropping the banner landmark from the a11y tree.
+ */
+.shell {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5) var(--s-8);
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  grid-template-areas:
+    'identity main'
+    'skills   main';
+  /* The left column is sized content-first; the spare row absorbs the slack. */
+  grid-template-rows: auto 1fr;
+  column-gap: var(--s-7);
+  row-gap: var(--s-6);
+  align-items: start;
+}
+
+.identity {
+  grid-area: identity;
+}
+
+.skills {
+  grid-area: skills;
+  min-width: 0;
+}
+
+.main {
+  grid-area: main;
+  /* `minmax(0, 1fr)` above already bounds this; min-width guards long words. */
+  min-width: 0;
 }
 
 .main:focus {
   outline: none;
 }
 
-.main {
-  flex: 1;
-  width: 100%;
-  max-width: var(--content-max-width);
-  margin: 0 auto;
-  padding: var(--space-5) var(--space-3);
+/*
+ * One column. Skills drops below the main content: the rail stacks first at
+ * this width, and burying the hero statement under ~25 filter chips is the
+ * wrong first impression on a phone. The skip link still jumps past the rail.
+ */
+@media (max-width: 860px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'identity'
+      'main'
+      'skills';
+    grid-template-rows: auto auto auto;
+    row-gap: var(--s-6);
+    padding: var(--s-5) var(--s-4) var(--s-7);
+  }
 }

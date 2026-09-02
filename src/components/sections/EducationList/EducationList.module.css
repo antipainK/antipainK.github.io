@@ -1,56 +1,126 @@
 .section {
-  padding: var(--space-5) 0;
+  margin-bottom: var(--s-7);
 }
 
-.list {
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-bottom: var(--s-2);
+  border-bottom: var(--hairline) solid var(--rule-strong);
+  margin-bottom: var(--s-4);
+}
+
+.sectionHead h2 {
+  font-size: var(--text-xl);
+}
+
+.records {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: var(--space-4);
 }
 
-.item {
-  padding: var(--space-4);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+/* Same record treatment as experience — see ExperienceTimeline.module.css. */
+.entry {
+  max-width: var(--measure);
+  padding: var(--s-5) 0 var(--s-5) var(--s-4);
+  margin-left: calc((var(--s-4) + 2px) * -1);
+  border-bottom: var(--hairline) solid var(--rule);
+  border-left: 2px solid transparent;
+}
+
+.entry:first-child {
+  padding-top: var(--s-2);
+}
+
+.entry:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .highlighted {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px var(--color-accent);
+  border-left-color: var(--accent);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .item {
-    transition: none;
-  }
+/* See ExperienceTimeline.module.css — muted colour, never opacity. */
+.dimmed,
+.dimmed .title,
+.dimmed .when,
+.dimmed .meta,
+.dimmed .note {
+  color: var(--ink-faint);
+}
+
+.dimmed .tag {
+  border-color: var(--rule);
+  color: var(--ink-faint);
+}
+
+.entryHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-4);
+  flex-wrap: wrap;
 }
 
 .title {
-  margin: 0 0 var(--space-1);
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  font-weight: 500;
+  letter-spacing: var(--tracking-normal);
+  margin: 0;
+}
+
+.when {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .meta {
-  color: var(--color-text-muted);
-  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--ink-faint);
+  margin: var(--s-1) 0 var(--s-2);
+}
+
+.note {
+  margin: 0;
+  font-size: var(--text-copy);
+  line-height: var(--leading-copy);
 }
 
 .tags {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
-  margin: var(--space-3) 0 0;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 0;
   padding: 0;
 }
 
 .tag {
-  font-size: var(--font-size-sm);
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  padding: 2px var(--s-2);
+  border: var(--hairline) solid var(--border-control);
   border-radius: var(--radius);
-  color: var(--color-text-muted);
+  color: var(--ink-muted);
+}
+
+/* See ExperienceTimeline.module.css — narrower gutter below 860px, content still at 0. */
+@media (max-width: 860px) {
+  .entry {
+    margin-left: -14px;
+    padding-left: var(--s-3);
+  }
+}
+
+@media (max-width: 560px) {
+  .when {
+    white-space: normal;
+  }
 }

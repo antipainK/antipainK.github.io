@@ -1,0 +1,105 @@
+/*
+ * Static by default. With the skills panel beside it the left column runs to
+ * roughly 1000px, so on a 1280x800 window a sticky rail would pin at the top
+ * and leave its lower half permanently unreachable — you can never scroll to
+ * the bottom of a sticky element taller than the viewport. The height query
+ * turns sticky back on only where the column actually fits, which beats
+ * choosing one behaviour for every screen, and avoids an internal scrollbar.
+ */
+.rail {
+  grid-area: identity;
+  position: static;
+}
+
+@media (min-height: 1100px) {
+  .rail {
+    position: sticky;
+    top: calc(var(--header-height) + var(--s-5));
+  }
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0 0 var(--s-1);
+}
+
+.nameLink {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nameLink:hover {
+  color: var(--accent);
+}
+
+.role {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.location {
+  display: flex;
+  align-items: start;
+  gap: var(--s-2);
+  font-size: var(--text-sm);
+  color: var(--ink-faint);
+  margin: 0 0 var(--s-4);
+}
+
+/*
+ * Sized to the cap height of the adjacent 13px text rather than to the line
+ * box, and nudged down optically so it sits on the text's centre, not its
+ * baseline. Fills with currentColor, so it needs no token.
+ */
+.icon {
+  flex: 0 0 auto;
+  width: 0.95em;
+  height: 0.95em;
+  margin-top: 0.28em;
+}
+
+.contactLink {
+  display: flex;
+  align-items: start;
+  gap: var(--s-2);
+}
+
+.portrait {
+  display: block;
+  width: var(--portrait-size);
+  height: var(--portrait-size);
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  border: var(--hairline) solid var(--rule);
+  margin-bottom: var(--s-4);
+}
+
+/*
+ * The section anchors are gone: a three-section page does not need a table of
+ * contents, and the CV route now sits in the header with the other chrome.
+ */
+.contacts {
+  list-style: none;
+  margin: 0;
+  padding: var(--s-4) 0 0;
+  border-top: var(--hairline) solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  font-size: var(--text-sm);
+  /* Long addresses must not push the rail wider than its track. */
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 860px) {
+  .rail {
+    position: static;
+    border-bottom: var(--hairline) solid var(--rule-strong);
+    padding-bottom: var(--s-4);
+  }
+}

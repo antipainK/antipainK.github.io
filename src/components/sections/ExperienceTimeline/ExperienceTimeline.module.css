@@ -1,68 +1,171 @@
 .section {
-  padding: var(--space-5) 0;
+  margin-bottom: var(--s-7);
 }
 
-.timeline {
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-bottom: var(--s-2);
+  border-bottom: var(--hairline) solid var(--rule-strong);
+  margin-bottom: var(--s-4);
+}
+
+.sectionHead h2 {
+  font-size: var(--text-xl);
+}
+
+.records {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: var(--space-4);
 }
 
-.item {
-  padding: var(--space-4);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+/*
+ * Records, not cards: separated by a hairline rule, no surface of their own.
+ * Cards are reserved for project work, which is a different kind of object.
+ *
+ * A record has no surface to tint, so a skill match is marked by a rule in the
+ * gutter — transparent at rest, so matching reflows nothing.
+ */
+/*
+ * Bounded by the measure, not just the prose inside it. Constraining only
+ * `.points` left the bullets wrapping at ~60% of the column while the dates
+ * right-aligned at 100%, opening a permanent empty channel down the middle of
+ * every entry. Bounding the record itself brings the two edges together.
+ */
+.entry {
+  max-width: var(--measure);
+  padding: var(--s-5) 0 var(--s-5) var(--s-4);
+  margin-left: calc((var(--s-4) + 2px) * -1);
+  border-bottom: var(--hairline) solid var(--rule);
+  border-left: 2px solid transparent;
+}
+
+.entry:first-child {
+  padding-top: var(--s-2);
+}
+
+.entry:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .highlighted {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px var(--color-accent);
+  border-left-color: var(--accent);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .item {
-    transition: none;
-  }
+/*
+ * A non-match recedes so the matches read as matches. Colour, never opacity —
+ * opacity on text fails contrast. --ink-faint still clears 4.5:1 on paper, so
+ * a dimmed entry stays readable rather than becoming decoration.
+ */
+.dimmed,
+.dimmed .org,
+.dimmed .title,
+.dimmed .when,
+.dimmed .meta {
+  color: var(--ink-faint);
 }
 
-.head {
+.dimmed .tag {
+  border-color: var(--rule);
+  color: var(--ink-faint);
+}
+
+.entryHead {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: baseline;
-  gap: var(--space-2);
+  gap: var(--s-4);
+  flex-wrap: wrap;
 }
 
 .title {
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  font-weight: 500;
+  letter-spacing: var(--tracking-normal);
   margin: 0;
 }
 
-.company {
-  color: var(--color-accent);
-  font-weight: 600;
+.org {
+  color: var(--accent);
+}
+
+.when {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .meta {
-  color: var(--color-text-muted);
-  margin: var(--space-1) 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--ink-faint);
+  margin: var(--s-1) 0 var(--s-3);
+}
+
+/* `disc`, not the browser's nested-list default `circle` — hollow rings at top
+   level read as an accident rather than a choice. */
+.points {
+  margin: 0 0 var(--s-3);
+  padding-left: 1.1em;
+  list-style-type: disc;
+  font-size: var(--text-copy);
+  line-height: var(--leading-copy);
+}
+
+.points li::marker {
+  color: var(--ink-faint);
+  font-size: 0.85em;
+}
+
+.points li {
+  margin-bottom: var(--s-2);
+}
+
+.points li:last-child {
+  margin-bottom: 0;
 }
 
 .tags {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
-  margin: var(--space-3) 0 0;
+  gap: var(--s-2);
+  margin: var(--s-2) 0 0;
   padding: 0;
 }
 
 .tag {
-  font-size: var(--font-size-sm);
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  padding: 2px var(--s-2);
+  border: var(--hairline) solid var(--border-control);
   border-radius: var(--radius);
-  color: var(--color-text-muted);
+  color: var(--ink-muted);
+}
+
+/*
+ * The gutter the highlight rule hangs in shrinks with the shell: below 860px
+ * the shell padding is 16px, so the desktop -18px would push the rule
+ * off-screen and produce a horizontal scrollbar. Narrow the gutter rather
+ * than dropping it — zeroing the margin while keeping the 2px border and
+ * 12px padding would indent every record 14px from the section rule above it.
+ * Border box starts at -14, content still lands at 0.
+ */
+@media (max-width: 860px) {
+  .entry {
+    margin-left: -14px;
+    padding-left: var(--s-3);
+  }
+}
+
+/* Dates drop under the title rather than crushing it at phone widths. */
+@media (max-width: 560px) {
+  .when {
+    white-space: normal;
+  }
 }

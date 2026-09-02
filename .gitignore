@@ -23,3 +23,6 @@ coverage
 # Claude Code local artifacts (settings.json IS committed)
 .claude/.cc-writes/
 .claude/settings.local.json
+
+# Output of `pnpm screenshot:diacritics` — a local check, not an artefact to commit
+diacritics.png

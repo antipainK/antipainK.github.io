@@ -1,46 +1,178 @@
 .section {
-  padding: var(--space-5) 0;
+  margin-bottom: var(--s-7);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-bottom: var(--s-2);
+  border-bottom: var(--hairline) solid var(--rule-strong);
+  margin-bottom: var(--s-4);
+}
+
+.sectionHead h2 {
+  font-size: var(--text-xl);
+}
+
+.aside {
+  font-size: var(--text-sm);
+  color: var(--ink-faint);
+}
+
+/*
+ * Reserves its own space whether or not a filter is active, so pinning a chip
+ * does not shove the section down. Empty until something is pinned.
+ */
+.filterStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 1.75rem;
+  margin: 0 0 var(--s-3);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.clear {
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: 2px var(--s-2);
+  background-color: transparent;
+  color: var(--ink);
+  border: var(--hairline) solid var(--border-control);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.clear:hover {
+  background-color: var(--paper-sunken);
 }
 
 .group {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--s-5);
+}
+
+.group:last-child {
+  margin-bottom: 0;
 }
 
 .groupTitle {
-  margin: 0 0 var(--space-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  font-weight: 500;
+  letter-spacing: var(--tracking-normal);
+  margin: 0 0 var(--s-3);
 }
 
-.tags {
+/*
+ * A measured skill: label, span bar, figure. The bar is the point, so the row
+ * is a plain control — it keeps the hover-to-highlight behaviour without
+ * looking like a button.
+ */
+.measure {
+  display: grid;
+  grid-template-columns: 110px minmax(60px, 200px) auto;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  margin-bottom: var(--s-2);
+  padding: var(--s-1) 0;
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  background: none;
+  border: 0;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.measureName {
+  color: var(--ink);
+}
+
+.track {
+  display: block;
+  height: 8px;
+  background-color: var(--paper-sunken);
+  border: var(--hairline) solid var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  background-color: var(--accent);
+}
+
+.figure {
+  font-variant-numeric: tabular-nums;
+}
+
+.measure:hover .measureName,
+.measure:focus-visible .measureName {
+  color: var(--accent);
+}
+
+.measure[aria-pressed='true'] .measureName {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.chips {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--s-2);
   margin: 0;
   padding: 0;
 }
 
-.tag {
-  display: inline-flex;
+.alsoRow {
+  display: flex;
   align-items: center;
-  gap: var(--space-1);
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+}
+
+.alsoLabel {
+  font-size: var(--text-sm);
+  color: var(--ink-faint);
+  min-width: 110px;
+}
+
+/* Bare chip, no duration — a name is all this is claiming. */
+.chip {
   font: inherit;
-  font-size: var(--font-size-sm);
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  padding: 2px var(--s-2);
+  /* 3:1 against the page per WCAG 1.4.11; --rule is ~1.2:1 and vanishes. */
+  border: var(--hairline) solid var(--border-control);
   border-radius: var(--radius);
   background-color: transparent;
-  color: var(--color-text-muted);
+  color: var(--ink-muted);
   cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
 }
 
-.tag:hover,
-.tag:focus-visible,
-.tag[aria-pressed='true'] {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+.chip:hover,
+.chip:focus-visible {
+  border-color: var(--rule-strong);
+  color: var(--ink);
 }
 
-.duration {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+.chip[aria-pressed='true'] {
+  background-color: var(--accent-tint);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+@media (max-width: 560px) {
+  .measure {
+    grid-template-columns: 90px minmax(0, 1fr) auto;
+    gap: var(--s-2);
+  }
 }

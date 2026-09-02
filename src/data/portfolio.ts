@@ -3,8 +3,39 @@
  * lives in `src/locales/<lng>.ts`, keyed by `id`.
  */
 
+/** Contacts the rail can render; each id maps to an icon in `Rail/icons.tsx`. */
+export type ContactId = 'email' | 'github' | 'linkedin';
+
+export interface Contact {
+  /** Stable React list key, and the icon selector. */
+  id: ContactId;
+  href: string;
+  /** Shown verbatim — an address is the same in every language. */
+  label: string;
+}
+
 export const profile = {
   name: 'Wojciech Kosztyła',
+  /** Served from `public/`; see `Rail` for the rendered size. */
+  portrait: '/portrait.png',
+  contacts: [
+    { id: 'email', href: 'mailto:kosztylawojciech@gmail.com', label: 'kosztylawojciech@gmail.com' },
+    { id: 'github', href: 'https://github.com/antipainK', label: 'github.com/antipainK' },
+    { id: 'linkedin', href: 'https://www.linkedin.com/in/wojciech-kosztyła', label: 'linkedin.com/in/wojciech-kosztyła' },
+  ],
+} as const satisfies { name: string; portrait: string; contacts: readonly Contact[] };
+
+/**
+ * Figures worth lifting out of the bullets and setting at display size.
+ * Facts, so they live here; the wording around them is in the locales.
+ * The third hero figure is not here on purpose — it is computed from
+ * `languagePeriods` at render time so it cannot go stale.
+ */
+export const headlineFigures = {
+  /** Repositories onboarded onto automated dependency updates (RenovateBot). */
+  automatedUpdateRepos: 100,
+  /** Engineers in the office served by the standardised GitLab CI templates. */
+  ciTemplateEngineers: 60,
 } as const;
 
 export interface Company {
@@ -24,8 +55,13 @@ export interface Period {
   end: string | null;
 }
 
-/** Auto-computed "years of experience" duration (see `@lib/skills`) applies only to this category. */
-export type SkillCategory = 'language' | 'webDevelopment' | 'database' | 'cloudDevops' | 'aiAssisted' | 'hardwareProtocols';
+/**
+ * Auto-computed "years of experience" duration (see `@lib/skills`) applies only
+ * to `language`. `infrastructure` absorbed the former `hardwareProtocols`
+ * group: VXI-11 was its only member, and a category holding one chip reads as
+ * a mistake rather than a category.
+ */
+export type SkillCategory = 'language' | 'webDevelopment' | 'database' | 'infrastructure' | 'aiAssisted';
 
 export interface Skill {
   /**
@@ -65,23 +101,29 @@ export const skillsCatalog = [
   { name: 'MySQL', category: 'database' },
   { name: 'NoSQL', category: 'database' },
   { name: 'MongoDB', category: 'database' },
-  { name: 'AWS', category: 'cloudDevops' },
-  { name: 'Kubernetes', category: 'cloudDevops' },
-  { name: 'GitLab CI', category: 'cloudDevops' },
-  { name: 'RenovateBot', category: 'cloudDevops' },
-  { name: 'Splunk', category: 'cloudDevops' },
-  { name: 'Grafana', category: 'cloudDevops' },
-  { name: 'Google Cloud Platform', category: 'cloudDevops' },
+  { name: 'AWS', category: 'infrastructure' },
+  { name: 'Kubernetes', category: 'infrastructure' },
+  { name: 'GitLab CI', category: 'infrastructure' },
+  { name: 'RenovateBot', category: 'infrastructure' },
+  { name: 'Splunk', category: 'infrastructure' },
+  { name: 'Grafana', category: 'infrastructure' },
+  { name: 'Google Cloud Platform', category: 'infrastructure' },
+  { name: 'VXI-11', category: 'infrastructure' },
   { name: 'Claude Code', category: 'aiAssisted' },
   { name: 'Cursor', category: 'aiAssisted' },
   { name: 'Windsurf', category: 'aiAssisted' },
   { name: 'Gemini', category: 'aiAssisted' },
-  { name: 'VXI-11', category: 'hardwareProtocols' },
 ] as const satisfies readonly Skill[];
 
 /** Language names known to the catalog — keeps `languagePeriods` honest at compile time. */
 type LanguageSkill = Extract<(typeof skillsCatalog)[number], { category: 'language' }>;
 export type KnownProgrammingLanguage = LanguageSkill['name'];
+
+/**
+ * The languages the hero's "years of experience" figure is measured across.
+ * Computed from `languagePeriods`, never written down as a number.
+ */
+export const MAIN_LANGUAGES = ['Java', 'TypeScript'] as const satisfies readonly KnownProgrammingLanguage[];
 
 /**
  * Everything in the catalog that isn't a programming language — the same

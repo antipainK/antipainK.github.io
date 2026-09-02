@@ -39,7 +39,7 @@ an explicit decision, not an oversight).
 
 `Layout` (`src/components/layout/Layout/Layout.tsx`) is the shared layout route: it renders
 `<Outlet/>` instead of taking a `children` prop, so every page renders inside the same
-Navbar/Footer chrome. Its only call site is `AppRoutes`.
+Rail/Footer chrome. Its only call site is `AppRoutes`.
 
 ## How prerendering actually works
 
@@ -68,7 +68,7 @@ Navbar/Footer chrome. Its only call site is `AppRoutes`.
 Prerendering only covers paths that *are* routes. For anything else (`/nonsense`, a stale link, a
 typo) GitHub Pages falls back to `404.html`, serving it at the requested URL without a redirect —
 so if that file is the app shell, the SPA boots, the router sees the original path, and the `*`
-route renders `NotFoundPage` inside the normal Navbar/Footer chrome. The visitor gets the site,
+route renders `NotFoundPage` inside the normal Rail/Footer chrome. The visitor gets the site,
 and the response still carries a real HTTP 404.
 
 `dist/404.html` is produced by the `emit-not-found-shell` plugin in `vite.config.ts`, which copies
@@ -165,7 +165,7 @@ fine in `pnpm dev`.
 1. Add a page component under `src/pages/<Name>Page/` (mirror `CvPage`'s structure: a component
    calling `useDocumentHead`, plus a colocated test).
 2. Add a `<Route element={<YourPage/>} path="..." />` inside `AppRoutes` in `src/App.tsx`.
-3. Add a nav link in `Navbar.tsx` if it should be reachable from the header (use react-router's
+3. Add a nav link in `Rail.tsx` if it should be reachable from the rail (use react-router's
    `Link`, not a plain `<a>`, for real route transitions).
 4. Add the route to `deriveRoutes.ts` if it's a static route (a project-style dynamic route only
    needs its data source wired in, per above).

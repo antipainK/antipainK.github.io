@@ -19,9 +19,12 @@
     "test": "vitest",
     "test:ci": "vitest run",
     "typecheck": "tsc -b",
-    "prerender": "node scripts/prerender.mjs"
+    "prerender": "node scripts/prerender.mjs",
+    "screenshot:diacritics": "node scripts/screenshotDiacritics.mjs"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/ibm-plex-serif": "^5.3.0",
     "i18next": "^26.4.0",
     "i18next-browser-languagedetector": "^8.2.1",
     "react": "^19.2.8",

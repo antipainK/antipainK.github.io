@@ -1,5 +1,38 @@
 import { describe, expect, it } from 'vitest';
-import { computeLanguageDuration, findEntryIdsUsingTechnology } from './skills';
+import { computeLanguageDuration, computeLastUsed, findEntryIdsUsingTechnology } from './skills';
+
+describe('computeLastUsed', () => {
+  const now = new Date('2026-09-02');
+  const entries = [
+    {
+      id: 'current',
+      period: { start: '2024-04-01', end: null },
+      languagePeriods: [{ languages: ['Java'] }],
+    },
+    {
+      id: 'past',
+      period: { start: '2021-07-01', end: '2021-10-31' },
+      languagePeriods: [{ languages: ['Java', 'C++'] }],
+    },
+  ];
+
+  it('returns null when no entry records the language', () => {
+    expect(computeLastUsed(entries, 'Rust', now)).toBeNull();
+  });
+
+  it('resolves an open period to now, so ongoing use sorts newest', () => {
+    expect(computeLastUsed(entries, 'Java', now)).toBe(now.getTime());
+  });
+
+  it('returns the end of the latest closed period', () => {
+    expect(computeLastUsed(entries, 'C++', now)).toBe(new Date('2021-10-31').getTime());
+  });
+
+  it('takes the latest period, not the first match', () => {
+    const reversed = [...entries].reverse();
+    expect(computeLastUsed(reversed, 'Java', now)).toBe(now.getTime());
+  });
+});
 
 describe('computeLanguageDuration', () => {
   it('returns null total and no entries when nothing matches', () => {
