@@ -20,7 +20,9 @@
     "test:ci": "vitest run",
     "typecheck": "tsc -b",
     "prerender": "node scripts/prerender.mjs",
-    "screenshot:diacritics": "node scripts/screenshotDiacritics.mjs"
+    "screenshot:diacritics": "node scripts/screenshotDiacritics.mjs",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots"
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans": "^5.3.0",
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.62.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",

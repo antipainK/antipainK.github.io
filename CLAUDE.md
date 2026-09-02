@@ -35,6 +35,12 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
 - `pnpm screenshot:diacritics` — renders the Polish pangram in every loaded face and weight and
   writes `diacritics.png` (gitignored); also prints any request that left the origin. Same
   requirements as `pnpm prerender`.
+- `pnpm test:visual` — pixel-diffs the homepage against the committed baseline in
+  `e2e/visual.spec.ts-snapshots/` (`@playwright/test`'s `toHaveScreenshot()`; config in
+  `playwright.config.ts`). `pnpm test:visual:update` regenerates the baseline after an intentional
+  UI change — commit the updated PNG so reviewers see the actual pixel diff in the MR. Local-only
+  for now (no CI gate, no cross-platform baseline story) — see
+  `.claude/plans/pixel-diff-test-planned-2026-09-02.md`. Same requirements as `pnpm prerender`.
 
 > **`pnpm` itself is not on `PATH`** — it is Corepack-managed with no shim, so a non-interactive
 > shell gets `command not found`. **`corepack pnpm <script>` works with no setup**; `corepack` and
@@ -49,7 +55,8 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
   deps, assets). Add `pnpm build && pnpm prerender` when the change touches routing/`src/pages/`,
   and check the output under `dist/<route>/index.html` — this can't be verified by an agent in a
   network-restricted sandbox (needs a real browser + a bindable local port), so a human needs to
-  run it.
+  run it. Add `pnpm build && pnpm test:visual` when the change touches rendered UI, to catch
+  unintended pixel diffs — same sandbox caveat as `pnpm prerender`.
 - **Commit messages:** Conventional Commits (`feat:`, `fix:`, `chore:`, `test:`, `ci:`, `docs:`).
 
 ## Conventions
@@ -159,6 +166,16 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
   every route from `scripts/deriveRoutes.ts` (derived from `src/data/projects.ts`) and writes the
   rendered HTML to `dist/<route>/index.html`. Full rationale/mechanics/known gaps:
   `docs/routing-and-prerendering.md`.
+- **Visual regression is a separate architecture from prerendering**, deliberately: `e2e/*.spec.ts`
+  + `playwright.config.ts` drive the `@playwright/test` runner (`toHaveScreenshot()`), not the
+  plain `playwright` driver that `scripts/prerender.mjs` and `scripts/screenshotDiacritics.mjs`
+  script by hand. Baseline PNGs under `e2e/**/*-snapshots/` are **intentionally committed** — the
+  opposite of `diacritics.png`, which is gitignored — so an MR reviewer sees the actual pixel diff
+  in GitHub's file view. They never reach the deployed site because `vite build` only picks up
+  `src/` and `public/`. `e2e/*.ts` runs under Node like `scripts/*.ts` (same plain-relative-import
+  constraint), and is included in `tsconfig.node.json`, not `tsconfig.app.json`. No CI gate yet;
+  see `.claude/plans/pixel-diff-test-planned-2026-09-02.md` before assuming this runs anywhere but
+  a developer's machine.
 
 ## Version policy
 Keep dependencies and tooling reasonably current — **you may bump Node, deps, and tooling to newer

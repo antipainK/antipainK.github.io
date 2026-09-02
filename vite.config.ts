@@ -82,6 +82,10 @@ const config: UserConfig & { test: InlineConfig } = {
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',
     css: true,
+    // Vitest's default include glob matches *.spec.ts anywhere in the repo,
+    // which would otherwise also pick up e2e/*.spec.ts -- those are
+    // @playwright/test files, not Vitest ones, and crash if Vitest runs them.
+    include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
   },
 };
 
