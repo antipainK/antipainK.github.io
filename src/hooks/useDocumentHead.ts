@@ -1,5 +1,12 @@
 import { useEffect } from 'react';
 
+/**
+ * Mirrors the `<meta name="description">` baked into `index.html`. Pages that
+ * set no description of their own fall back to this rather than shipping none:
+ * a page with no description at all unfurls blank when shared.
+ */
+export const DEFAULT_DESCRIPTION = 'Portfolio of Wojciech Kosztyła — software engineer.';
+
 interface DocumentHeadOptions {
   title: string;
   description?: string;
@@ -15,10 +22,6 @@ function upsertMeta(attribute: 'name' | 'property', key: string, content: string
   element.setAttribute('content', content);
 }
 
-function removeMeta(attribute: 'name' | 'property', key: string): void {
-  document.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`)?.remove();
-}
-
 /**
  * Sets the document title and description/OG meta tags for the current
  * route. This is what the build-time prerender snapshot actually captures
@@ -26,14 +29,11 @@ function removeMeta(attribute: 'name' | 'property', key: string): void {
  */
 export function useDocumentHead({ title, description }: DocumentHeadOptions): void {
   useEffect(() => {
+    const resolved = description ?? DEFAULT_DESCRIPTION;
+
     document.title = title;
     upsertMeta('property', 'og:title', title);
-    if (description) {
-      upsertMeta('name', 'description', description);
-      upsertMeta('property', 'og:description', description);
-    } else {
-      removeMeta('name', 'description');
-      removeMeta('property', 'og:description');
-    }
+    upsertMeta('name', 'description', resolved);
+    upsertMeta('property', 'og:description', resolved);
   }, [title, description]);
 }
