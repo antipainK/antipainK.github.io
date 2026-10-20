@@ -4,6 +4,10 @@ on:
   push:
     branches: [master]
   workflow_dispatch:
+  # Weekly rebuild: durations ("2 yr 6 mo") and the footer year are computed from
+  # the build date and prerendered into static HTML, so they go stale without it.
+  schedule:
+    - cron: "0 5 * * 1"
 
 permissions:
   contents: read
