@@ -2,7 +2,7 @@
 // by scripts/prerender.mjs and scripts/screenshotDiacritics.mjs -- this one
 // drives the @playwright/test runner and its toHaveScreenshot() baselines.
 //
-// Run after `pnpm build`: pnpm test:visual / pnpm test:visual:update
+// Run after `pnpm build`: pnpm test:visual (pnpm screenshots:update regenerates baselines)
 // Needs a real browser and a bindable local port, same as `pnpm prerender`.
 import { defineConfig, devices } from '@playwright/test';
 
@@ -10,11 +10,6 @@ const PORT = 4175;
 
 export default defineConfig({
   testDir: './e2e',
-  // Default template appends {-projectName}{-platform} (e.g. "-chromium-darwin").
-  // This suite runs one project on one machine (local-only, see
-  // .claude/plans/pixel-diff-test-planned-2026-09-02.md) so a platform-qualified
-  // filename only adds confusion, not safety -- drop both.
-  snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   use: {
     baseURL: `http://localhost:${PORT}`,
   },
@@ -23,8 +18,10 @@ export default defineConfig({
   ],
   webServer: {
     // Not `pnpm exec vite ...`: webServer spawns via a raw shell that has no
-    // knowledge of Corepack, so `pnpm` itself is "command not found" here.
-    command: `node_modules/.bin/vite preview --port ${PORT} --strictPort`,
+    // knowledge of the shell's pnpm shim, so `pnpm` can be "command not found" here. Not
+    // `node_modules/.bin/vite` either: cmd.exe rejects that forward-slash path on
+    // Windows. Invoking Vite's JS entry through node works in every shell.
+    command: `node node_modules/vite/bin/vite.js preview --port ${PORT} --strictPort`,
     port: PORT,
     reuseExistingServer: true,
   },

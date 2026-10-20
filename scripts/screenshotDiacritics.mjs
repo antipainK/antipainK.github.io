@@ -31,10 +31,11 @@ async function main() {
     throw new Error('Vite preview server did not resolve a local URL.');
   }
 
-  const browser = await chromium.launch();
+  let browser;
   const requests = [];
 
   try {
+    browser = await chromium.launch();
     const page = await browser.newPage({ viewport: { width: 1100, height: 700 } });
     page.on('request', (request) => requests.push(request.url()));
 
@@ -62,7 +63,7 @@ async function main() {
       ? 'no third-party requests — nothing left the origin'
       : `THIRD-PARTY REQUESTS:\n${thirdParty.join('\n')}`);
   } finally {
-    await browser.close();
+    await browser?.close();
     await server.close();
   }
 }

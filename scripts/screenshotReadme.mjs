@@ -18,9 +18,10 @@ async function main() {
     throw new Error('Vite preview server did not resolve a local URL.');
   }
 
-  const browser = await chromium.launch();
+  let browser;
 
   try {
+    browser = await chromium.launch();
     const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
     await page.goto(baseUrl, { waitUntil: 'networkidle' });
     await page.waitForSelector('#root > *');
@@ -29,7 +30,7 @@ async function main() {
     await page.screenshot({ path: OUT });
     console.log(`wrote ${OUT}`);
   } finally {
-    await browser.close();
+    await browser?.close();
     await server.close();
   }
 }

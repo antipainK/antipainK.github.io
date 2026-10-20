@@ -26,8 +26,10 @@ async function main() {
     throw new Error('Vite preview server did not resolve a local URL to prerender against.');
   }
 
-  const browser = await chromium.launch();
+  let browser;
+
   try {
+    browser = await chromium.launch();
     const page = await browser.newPage();
 
     for (const route of routes) {
@@ -44,7 +46,7 @@ async function main() {
       console.log(`prerendered ${route} -> ${path.join(outDir, 'index.html')}`);
     }
   } finally {
-    await browser.close();
+    await browser?.close();
     await server.close();
   }
 }
