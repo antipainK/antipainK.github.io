@@ -18,11 +18,19 @@ Personal portfolio SPA. Public GitHub user-site: `https://antipaink.github.io/`.
   (version, path, threshold) into a new context without re-checking it there.
 - **Don't rubber-stamp** a suggestion (mine or a reviewer's) — check it against the actual code first.
 
-## Stack (current baseline — update freely when warranted)
-Vite + React + TypeScript (strict) · react-router · CSS Modules · react-i18next (2 locales) ·
-Vitest + RTL · ESLint flat config (`@stylistic` formatting, **no Prettier**) · pnpm (Corepack) ·
-Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions → Pages ·
-`@fontsource/ibm-plex-sans` + `@fontsource/ibm-plex-serif` (self-hosted webfonts, no Google Fonts).
+## Project docs
+This file holds rules and conventions. The rest lives in linked files, which may be edited freely
+(only this file needs approval):
+- **Stack and versions:** [`docs/TECH-STACK_2026-10-21.md`](docs/TECH-STACK_2026-10-21.md) — the
+  date in the name is when it was last reviewed; rename it when you update it.
+- **Surprises and things that went wrong:** [`docs/FINDINGS.md`](docs/FINDINGS.md) — add an entry
+  when something unexpected happens.
+- **Planned changes:** `.claude/plans/PLAN-<title>_<YYYY-MM-DD>.md`, committed. Current:
+  [`PLAN-pixel-diff-visual-test-ci_2026-09-02.md`](.claude/plans/PLAN-pixel-diff-visual-test-ci_2026-09-02.md).
+- **Routing and prerendering mechanics:** [`docs/routing-and-prerendering.md`](docs/routing-and-prerendering.md).
+
+In one line: Vite + React + TypeScript (strict), CSS Modules, react-i18next (en, pl), Vitest,
+ESLint (no Prettier), pnpm, Node 24 via fnm, Playwright (dev-only), GitHub Actions → Pages.
 
 ## Commands
 - `pnpm dev` — dev server
@@ -34,11 +42,14 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
 - `pnpm test` (watch) / `pnpm test:ci` (once)
 - `pnpm test:visual` — pixel-diffs the homepage against the committed baseline in
   `e2e/visual.spec.ts-snapshots/` (`@playwright/test`'s `toHaveScreenshot()`; config in
-  `playwright.config.ts`). `snapshotPathTemplate` drops Playwright's default
-  `{-projectName}{-platform}` suffix (so the file is `homepage.png`, not
-  `homepage-chromium-darwin.png`) since this suite has one project on one machine; revisit that
-  template if a second platform ever needs its own baseline. Local-only for now (no CI gate) — see
-  `.claude/plans/pixel-diff-test-planned-2026-09-02.md`. Same requirements as `pnpm prerender`.
+  `playwright.config.ts`). Playwright's default `{-projectName}{-platform}` suffix is kept, so
+  macOS and Windows each have their own baseline (`homepage-chromium-darwin.png`,
+  `homepage-chromium-win32.png`): font rasterisation differs per OS, so one shared file can't pass
+  on both. The first run on a new OS writes its baseline and fails once; commit it. The test freezes
+  the page clock (`FROZEN_CLOCK` in `e2e/visual.spec.ts`) because durations are computed from the
+  current date — regenerate every baseline if you change that date. Local-only for now (no CI gate)
+  — see `.claude/plans/PLAN-pixel-diff-visual-test-ci_2026-09-02.md`. Same requirements as `pnpm prerender`.
+- `pnpm preview` — serves the built `dist/` locally.
 - `pnpm screenshots:update` — regenerates every screenshot output in one pass, since they're meant
   to move together rather than drift out of sync one script at a time: `diacritics.png` (gitignored
   local font-loading check, `scripts/screenshotDiacritics.mjs`), `docs/homepage-preview.png`
@@ -46,14 +57,19 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
   baseline itself (`playwright test --update-snapshots`). Commit whichever of the committed outputs
   actually changed. Same requirements as `pnpm prerender`.
 
-> **`pnpm` itself is not on `PATH`** — it is Corepack-managed with no shim, so a non-interactive
-> shell gets `command not found`. **`corepack pnpm <script>` works with no setup**; `corepack` and
-> `node` are both already on `PATH`. Don't go hunting for a Node install or export a `PATH` prefix.
+> **Use plain `pnpm`.** Node is managed by fnm and pnpm is a standalone install; no Corepack
+> (standalone pnpm honored a `pnpm@10.18.0` pin on 2026-10-21; not re-checked against the current
+> 11.x pin). On Windows, run `pnpm` from PowerShell if Git Bash can't find it. Don't go hunting for
+> a Node install or export a `PATH` prefix. Details: `docs/FINDINGS.md`.
 
 ## Workflow rules
-- **Never `git commit` or `git push`.** Stage changes and suggest a commit message; the owner
-  commits and pushes personally (pushing to `master` auto-deploys to production). Gated in
-  `.claude/settings.json`.
+- **Commit or push only when the owner asks**, following the global commit flow (review, proposal,
+  explicit approval per commit). Pushing to `master` auto-deploys to production. Both are `ask`-gated
+  in `.claude/settings.json`.
+- **Cross-platform:** the owner works on macOS and Windows. Scripts and configs must not depend on
+  one shell (no `node_modules/.bin/...` paths in commands, no POSIX-only syntax in `package.json`).
+- **Deploys weekly as well as on push** (`schedule` in `deploy.yml`): durations and the footer year
+  are computed at build time and prerendered, so they go stale without a rebuild.
 - **After code changes, run `pnpm lint && pnpm typecheck && pnpm test:ci`** before calling work
   done. Add `pnpm build` when the change touches bundling/config (`vite.config.ts`, `tsconfig*`,
   deps, assets). Add `pnpm build && pnpm prerender` when the change touches routing/`src/pages/`,
@@ -127,10 +143,10 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
   `@lib/skills` defaults `now` to `new Date()`, which is a **default argument evaluated per call** —
   deriving a list by calling them per item samples a different instant for each one. That shipped
   as a real bug: two languages both still in use resolved `lastUsed` a millisecond apart, so the
-  recency tiebreak reordered the skill bars on every render. `orderLanguages(now)` in
-  `@lib/skillFilter` takes one instant and threads it through, which makes equal things compare
-  equal so `Array#sort`'s stability falls back to catalog order. It is called **once at module
-  load**, not per render. Pass `now` explicitly in tests.
+  recency tiebreak reordered the skill bars on every render. `orderLanguages(now)`
+  (defined in `@lib/skillFilter`) takes one instant and threads it through, which makes equal things
+  compare equal so `Array#sort`'s stability falls back to catalog order. It is called **once at
+  module load** in `SkillsSection.tsx`, not per render. Pass `now` explicitly in tests.
   - `@lib/skills` stays data-agnostic (entries in, numbers out) and is unit-tested with fixtures;
     `@lib/skillFilter` is the same logic **bound to the real catalog and timeline**, so components
     and `Layout` can share it without importing each other. Keep that seam.
@@ -168,24 +184,29 @@ Node 24 LTS · Playwright (dev-only, build-time prerendering) · GitHub Actions 
   no server-side rewrites, so client routing alone would 404 on a direct hit/refresh to `/cv` — the
   fix is build-time prerendering: `scripts/prerender.mjs` (Playwright + Vite's `preview()`) visits
   every route from `scripts/deriveRoutes.ts` (derived from `src/data/projects.ts`) and writes the
-  rendered HTML to `dist/<route>/index.html`. Full rationale/mechanics/known gaps:
-  `docs/routing-and-prerendering.md`.
+  rendered HTML to `dist/<route>/index.html`. Unknown URLs hit the catch-all `*` route
+  (`NotFoundPage`); `emitNotFoundShell` in `vite.config.ts` copies the shell to `dist/404.html` so
+  Pages serves it. Full rationale/mechanics/known gaps: `docs/routing-and-prerendering.md`.
+- **Path aliases:** `@components`, `@data`, `@hooks`, `@i18n`, `@lib`, `@locales`, `@pages` — defined
+  in both `vite.config.ts` and `tsconfig.app.json`; keep them in sync.
+- **The skills panel renders on the homepage only** (`Layout.tsx`); other routes show the rail and
+  routed page without it.
 - **Visual regression is a separate architecture from prerendering**, deliberately: `e2e/*.spec.ts`
   + `playwright.config.ts` drive the `@playwright/test` runner (`toHaveScreenshot()`), not the
   plain `playwright` driver that `scripts/prerender.mjs` and `scripts/screenshotDiacritics.mjs`
   script by hand. Baseline PNGs under `e2e/**/*-snapshots/` are **intentionally committed** — the
-  opposite of `diacritics.png`, which is gitignored — so an MR reviewer sees the actual pixel diff
+  opposite of `diacritics.png`, which is gitignored — so a reviewer of the commit sees the actual pixel diff
   in GitHub's file view. They never reach the deployed site because `vite build` only picks up
   `src/` and `public/`. `e2e/*.ts` runs under Node like `scripts/*.ts` (same plain-relative-import
   constraint), and is included in `tsconfig.node.json`, not `tsconfig.app.json`. No CI gate yet;
-  see `.claude/plans/pixel-diff-test-planned-2026-09-02.md` before assuming this runs anywhere but
+  see `.claude/plans/PLAN-pixel-diff-visual-test-ci_2026-09-02.md` before assuming this runs anywhere but
   a developer's machine.
 
 ## Version policy
 Keep dependencies and tooling reasonably current — **you may bump Node, deps, and tooling to newer
-versions when it's warranted** (e.g. Node 24 → 26). Versions named in this file / `.nvmrc` / CI are
-the current baseline, not a rule to defend; when you bump one, update `.nvmrc`, the CI workflow, and
-this file to match, and re-run the gates.
+versions when it's warranted** (e.g. Node 24 → 26). Versions named in `docs/TECH-STACK_*.md` / `.nvmrc` / CI
+are the current baseline, not a rule to defend; when you bump one, update `.nvmrc`, the CI workflow,
+and the tech-stack file (renaming it to the new date) to match, and re-run the gates.
 
 **One real constraint:** TypeScript must stay at a version `typescript-eslint` supports (currently
 `< 6.1`, so the `~5.9` pin). Do **not** move to TypeScript 7 (the native compiler) until
@@ -193,8 +214,8 @@ this file to match, and re-run the gates.
 `pnpm up --latest`. Revisit when that support lands.
 
 ## Other gotchas (don't "fix" without reason)
-- **pnpm is Corepack-pinned** via `package.json` `packageManager`; change it with
-  `corepack use pnpm@<v>`, not a hand edit.
+- **pnpm is pinned** via `package.json` `packageManager`; bump it with `pnpm self-update` and check
+  that the field changed, rather than a hand edit.
 - **`vite.config.ts`** types the `test` block via `vitest/node`'s `InlineConfig` on purpose (avoids
   a Vite-version type clash).
 - **`src/vite-env.d.ts`** is load-bearing (CSS Module + `import.meta.env` types); don't delete.

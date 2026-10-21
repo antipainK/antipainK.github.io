@@ -20,24 +20,28 @@ Built with React, TypeScript, and Vite, with first-class internationalization.
 
 ## Prerequisites & setup
 
-Requires **Node 24** (latest LTS) and **pnpm** (provisioned via Corepack).
+Requires **Node 24** (see `.nvmrc`) and **pnpm**. Node is managed with
+[fnm](https://github.com/Schniz/fnm), the same on macOS and Windows.
 
-### macOS (Homebrew)
+1. Install fnm and pnpm:
+   - macOS: `brew install fnm pnpm`
+   - Windows: `winget install Schniz.fnm pnpm.pnpm`
+2. Make fnm switch Node automatically when you `cd` into a folder with an `.nvmrc`. Add one line
+   to your shell's startup file:
+   - macOS (zsh), in `~/.zshrc`: `eval "$(fnm env --use-on-cd --shell zsh)"`
+   - Windows (PowerShell), in the file `$PROFILE`. Create it if missing, without `-Force` (which
+     would empty an existing one):
+     `if (!(Test-Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE }`, then
+     `notepad $PROFILE` and add the line `fnm env --use-on-cd | Out-String | Invoke-Expression`
 
-```sh
-brew install node@24        # or use nvm to honor .nvmrc
-corepack enable             # provisions the pnpm version pinned in package.json
-```
+   Then open a new terminal.
+3. From the repo root: `fnm install` (once, installs the Node version from `.nvmrc`).
 
-### Windows
+If a plain `pnpm` command prompts "Corepack is about to download…", an old Corepack shim is
+shadowing your pnpm: run `corepack disable` once in each Node version you use.
 
-```powershell
-winget install OpenJS.NodeJS.LTS   # or nvm-windows / fnm to honor .nvmrc
-corepack enable                    # run in an elevated (admin) terminal
-```
-
-Both paths converge on `corepack enable`, which activates the exact pnpm version
-pinned in `package.json` (`packageManager`). No global pnpm install needed.
+No Corepack is needed. `package.json` pins a pnpm version in `packageManager`, and pnpm itself
+reads that field.
 
 ## Install & run
 
@@ -61,9 +65,11 @@ pnpm preview     # serve the production build locally
 | `pnpm test:ci` | Run Vitest once (CI mode) |
 | `pnpm typecheck` | Type-check without emitting |
 | `pnpm prerender` | Build-time prerender (`dist/` must already exist — run `pnpm build` first) |
-| `pnpm screenshots:update` | Regenerate every screenshot output, incl. `docs/homepage-preview.png` (`dist/` must already exist) |
+| `pnpm test:visual` | Pixel-diff the homepage against the committed baseline for your OS (`dist/` must already exist) |
+| `pnpm screenshots:update` | Regenerate every screenshot output, incl. `docs/homepage-preview.png` and the visual baseline for your OS (`dist/` must already exist) |
 
-One-time per machine before the first `pnpm prerender`: `pnpm exec playwright install chromium`.
+One-time per machine before the first `pnpm prerender` or `pnpm test:visual`:
+`pnpm exec playwright install chromium`.
 
 ## Project structure
 
@@ -97,6 +103,10 @@ scripts/
   prerender.mjs            # build-time prerender (see Routing & prerendering below)
   screenshotDiacritics.mjs # renders the Polish pangram to check latin-ext loads
   screenshotReadme.mjs     # regenerates docs/homepage-preview.png shown above
+  lintFixEditedFile.mjs    # Claude Code hook: eslint --fix on the file just edited
+e2e/
+  visual.spec.ts           # pixel-diff of the homepage (clock frozen); baselines per OS beside it
+playwright.config.ts       # config for the visual test (not used by prerender.mjs)
 ```
 
 Facts (dates, company names, tech tags, links) live in `data/portfolio.ts`/`data/projects.ts`; the
@@ -126,6 +136,8 @@ renders over it client-side exactly like a normal SPA. CI runs this automaticall
 
 ## Deployment
 
-Every push to `master` runs lint, type-check, tests, and build, then installs Chromium and runs the
-prerender step, then deploys to GitHub Pages via GitHub Actions (`.github/workflows/deploy.yml`).
+Every push to `master`, and a weekly schedule (Mondays), runs lint, type-check, tests, and build,
+then installs Chromium and runs the prerender step, then deploys to GitHub Pages via GitHub Actions
+(`.github/workflows/deploy.yml`). The weekly run keeps build-time values such as skill durations
+current.
 Enable it once under **Settings → Pages → Source: GitHub Actions**.

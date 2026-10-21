@@ -29,5 +29,5 @@ playwright-report
 .claude/.cc-writes/
 .claude/settings.local.json
 
-# Output of `pnpm screenshot:diacritics` — a local check, not an artefact to commit
+# Output of scripts/screenshotDiacritics.mjs (run by `pnpm screenshots:update`) — a local check, not an artefact to commit
 diacritics.png
