@@ -1,62 +1,75 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/lintFixEditedFile.mjs",
+            "timeout": 30,
+            "statusMessage": "Auto-fixing lint..."
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Read",
       "Glob",
       "Grep",
-      "Bash(pnpm:*)",
-      "Bash(pnpx:*)",
-      "Bash(npx:*)",
-      "Bash(node:*)",
-      "Bash(corepack:*)",
-      "Bash(tsc:*)",
-      "Bash(eslint:*)",
-      "Bash(vitest:*)",
-      "Bash(vite:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm test:ci:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm prerender:*)",
+      "Bash(pnpm test:visual:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git show:*)",
-      "Bash(git branch:*)",
-      "Bash(git add:*)",
-      "Bash(git restore:*)",
-      "Bash(git stash:*)",
+      "Bash(git branch --show-current)",
       "Bash(git fetch:*)",
-      "Bash(ls:*)",
-      "Bash(cat:*)",
-      "Bash(rg:*)",
-      "Bash(grep:*)",
-      "Bash(find:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
-      "Bash(echo:*)",
-      "Bash(which:*)",
-      "Bash(pwd:*)",
-      "Bash(diff:*)",
-      "Bash(sed:*)",
-      "Bash(awk:*)",
-      "Bash(sort:*)",
-      "Bash(uniq:*)",
-      "Bash(wc:*)",
-      "Bash(jq:*)",
-      "Bash(mkdir:*)",
-      "Bash(touch:*)",
-      "Edit(CLAUDE.md)"
+      "PowerShell(git status:*)",
+      "PowerShell(git diff:*)",
+      "PowerShell(git log:*)",
+      "PowerShell(pnpm lint:*)",
+      "PowerShell(pnpm typecheck:*)",
+      "PowerShell(pnpm test:ci:*)",
+      "PowerShell(pnpm build:*)",
+      "Edit(/docs/**)",
+      "Edit(/.claude/plans/**)"
     ],
     "ask": [
+      "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "PowerShell(git add:*)",
+      "PowerShell(git commit:*)",
+      "PowerShell(git push:*)",
+      "Edit(/CLAUDE.md)",
+      "PowerShell(Remove-Item:*)",
+      "PowerShell(pnpm dlx *)",
+      "Bash(pnpm screenshots:update:*)",
+      "PowerShell(pnpm screenshots:update:*)",
+      "Bash(pnpm test:visual*--update-snapshots*)",
+      "PowerShell(pnpm test:visual*--update-snapshots*)",
+      "Bash(pnpm exec playwright test*--update-snapshots*)",
+      "PowerShell(pnpm exec playwright test*--update-snapshots*)"
     ],
     "deny": [
-      "Bash(rm -rf:*)",
-      "Bash(rm -fr:*)",
+      "Bash(npx:*)",
+      "PowerShell(npx:*)",
       "Bash(git reset --hard:*)",
-      "Bash(git push --force:*)",
-      "Bash(git push -f:*)",
-      "Bash(git clean -fdx:*)",
-      "Bash(git clean -fd:*)",
-      "Bash(sudo:*)"
+      "PowerShell(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "PowerShell(git clean:*)",
+      "Bash(rm -rf:*)",
+      "Read(./.env*)",
+      "Bash(pnpx:*)",
+      "PowerShell(bun:*)"
     ]
   }
 }
