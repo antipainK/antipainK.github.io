@@ -1,8 +1,10 @@
 # Findings
 
+Last reviewed: 2026-10-23
+
 Things that were unexpected, that went wrong, or that were only learned by hitting them. Newest
 first. Add an entry when something surprising happens; don't rewrite old ones — add a follow-up.
-Standing rules belong in `CLAUDE.md`, not here.
+Standing rules belong in `AGENTS.md` and `.ai/`, not here.
 
 ## 2026-10-21 — Two pnpms on one Windows machine
 

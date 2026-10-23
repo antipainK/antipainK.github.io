@@ -23,6 +23,13 @@ export default defineConfig([
     },
     rules: {
       '@typescript-eslint/ban-ts-comment': 'error',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+      '@typescript-eslint/consistent-type-imports': ['error', {
+        prefer: 'type-imports',
+        fixStyle: 'inline-type-imports',
+      }],
+      '@typescript-eslint/explicit-module-boundary-types': 'error',
+      '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
@@ -33,11 +40,36 @@ export default defineConfig([
       'no-console': 'warn',
       'no-duplicate-imports': 'error',
       'no-else-return': 'error',
+      'no-restricted-exports': ['error', { restrictDefaultExports: { direct: true } }],
       'no-unneeded-ternary': 'error',
       'no-useless-return': 'error',
       'no-var': 'error',
       'prefer-const': ['error', { destructuring: 'all' }],
       'prefer-template': 'error',
+      'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
+    },
+  },
+
+  // Tool config files must use a default export.
+  {
+    files: ['*.config.{js,ts}'],
+    rules: {
+      'no-restricted-exports': 'off',
+    },
+  },
+
+  // App code: import features through their index.ts, use aliases instead of `../`, and never
+  // reach into dev-only folders.
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          { group: ['@features/*/*'], message: 'Import a feature only through its index.ts.' },
+          { group: ['../*'], message: 'Use an alias or a ./ sibling import.' },
+          { group: ['**/scripts/**', '**/e2e/**'], message: 'src/ must not import dev-only code.' },
+        ],
+      }],
     },
   },
 
